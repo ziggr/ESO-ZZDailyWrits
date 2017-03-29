@@ -1,0 +1,9 @@
+## Title: ZZDailyWrits
+## Description: ZZDailyWrits version 2.7.1
+## Author: ziggr
+## APIVersion: 100018
+## SavedVariables: ZZDailyWritsVars
+
+ZZDailyWrits.lua
+Bindings.xml
+ZZDailyWrits.xml

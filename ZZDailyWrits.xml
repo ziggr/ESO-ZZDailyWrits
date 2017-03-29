@@ -1,0 +1,45 @@
+<GuiXml>
+    <Controls>
+        <TopLevelControl
+                hidden="true"
+                name="ZZDailyWritsUI"
+                movable="true"
+                mouseEnabled="true"
+                allowBringToTop="true"
+                clampedToScreen="true"
+                >
+            <Dimensions x="800" y="600" />
+
+            <OnMouseUp>ZZDailyWrits:SavePos()</OnMouseUp>
+            <!--
+
+            <OnUpdate>
+                ZZDailyWrits_Update()
+            </OnUpdate>
+
+            <OnInitialized>
+                ZZDailyWrits_Initialized()
+            </OnInitialized>
+            -->
+
+            <Controls>
+                <Backdrop name="$(parent)BG"
+                        centerColor="000000"
+                        edgeColor="202020"
+                        >
+                    <AnchorFill />
+                    <Edge edgeSize="1" />
+                </Backdrop>
+
+                <Label name="$(parent)Counter"
+                        font="ZoFontWindowTitle"
+                        color="CFDCBD"
+                        wrapMode="ELLIPSIS"
+                        verticalAlignment="TOP"
+                        text="ZZDailyWrits">
+                    <AnchorFill />
+                </Label>
+            </Controls>
+        </TopLevelControl>
+    </Controls>
+</GuiXml>
