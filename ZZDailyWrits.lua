@@ -109,6 +109,7 @@ local REQSEQ_BLACKSMITH_10 = {
 -- Hagnar   2017-03-29 zig: D1
 -- Zhaksyr  2017-03-30 zig: D2
 -- Zecorwyn 2017-03-30 zig: D2
+-- Simone   2017-03-30 zig: D2
 , { { 1, 43534, "Rubedite Greatsword" }
   , { 1, 43538, "Rubedite Sabatons" }
   , { 1, 43539, "Rubedite Gauntlets" }
@@ -117,6 +118,7 @@ local REQSEQ_BLACKSMITH_10 = {
 -- Day 3
 -- Al       2017-03-29 zig: D1
 -- Lilwen   2017-03-30 zig: D2
+-- Hagnar   2017-03-30 zig: D2
 , { { 1, 43531, "Rubedite Sword" }
   , { 1, 43537, "Rubedite Cuirass" }
   , { 1, 43540, "Rubedite Greaves" }
@@ -138,6 +140,7 @@ local REQSEQ_CLOTHIER_10 = {
 -- Hagnar   2017-03-29 zig: D1
 -- Zhaksyr  2017-03-30 zig: D2
 -- Zecorwyn 2017-03-30 zig: D2
+-- Simone   2017-03-30 zig: D2
 , { { 1, 43544, "Ancestor Silk Shoes" }
   , { 1, 43564, "Ancestor Silk Hat" }
   , { 1, 43548, "Ancestor Silk Sash" }
@@ -145,6 +148,7 @@ local REQSEQ_CLOTHIER_10 = {
 -- Day 3
 -- Al       2017-03-29 zig: D1
 -- Lilwen   2017-03-30 zig: D2
+-- Hagnar   2017-03-30 zig: D2
 , { { 1, 43543, "Ancestor Silk Robe" }
   , { 1, 43546, "Ancestor Silk Breeches" }
   , { 1, 43547, "Ancestor Silk Epaulets" }
@@ -156,6 +160,7 @@ local REQSEQ_WOODWORKING_10 = {
 -- Zhaksyr  2017-03-29 zig: D1
 -- Zecorwyn 2017-03-29 zig: D1
 -- Simone   2017-03-29 zig: D1
+-- Al       2017-03-30 zig: D2
   { { 2, 43549, "Ruby Ash Bow" }
   , { 1, 43556, "Ruby Ash Shield" }
   }
@@ -163,6 +168,7 @@ local REQSEQ_WOODWORKING_10 = {
 -- Lilwen   2017-03-29 zig: D1
 -- Hagnar   2017-03-29 zig: D1
 -- Zhaksyr  2017-03-30 zig: D2
+-- Simone   2017-03-30 zig: D2
 , { { 1, 43557, "Ruby Ash Inferno Staff" }
   , { 1, 43558, "Ruby Ash Ice Staff" }
   , { 1, 43559, "Ruby Ash Lightning Staff" }
@@ -170,6 +176,7 @@ local REQSEQ_WOODWORKING_10 = {
 -- Day 3
 -- Al       2017-03-29 zig: D1
 -- Lilwen   2017-03-30 zig: D2
+-- Hagnar   2017-03-30 zig: D2
 , { { 2, 43560, "Ruby Ash Restoration Staff" }
   , { 1, 43556, "Ruby Ash Shield" }
   }
@@ -193,12 +200,14 @@ local REQSEQ_ALCHEMY_10 = {
 -- Zecorwyn 2017-03-29 zig: D1
 -- Al       2017-03-29 zig: D1
 -- Hagnar   2017-03-29 zig: D1
+-- Simone   2017-03-30 zig: D2
 , { { 1, 44812, "Essence of Ravage Health" }
   , { 3, 64501, "Lorkhan's Tears", crafted = false }
   }
 -- Day 4 Zecorwyn
 -- Al       2017-03-30 zig: D2
 -- Zecorwyn 2017-03-30 zig: D2
+-- Hagnar   2017-03-30 zig: D2
 , { { 1, 54339, "Essence of Health" }
   , { 3, 30165, "Nirnroot", crafted = false }
   }
@@ -218,12 +227,14 @@ local REQSEQ_ENCHANTING_10 = {
 -- Hagnar   2017-03-29 zig: D1
 -- Zhaksyr  2017-03-30 zig: D2
 -- Zecorwyn 2017-03-30 zig: D2
+-- Simone   2017-03-30 zig: D2
 , { { 1, 26580, "Superb Glyph of Health" }
   , { 1, 64508, "Jehade", crafted = false }
   }
 -- Day 3
 -- Al       2017-03-29 zig: D1
 -- Lilwen   2017-03-30 zig: D2
+-- Hagnar   2017-03-30 zig: D2
 , { { 1, 26582, "Superb Glyph of Magicka" }
   , { 1, 45831, "Oko", crafted = false }
   }
@@ -237,6 +248,7 @@ local REQSEQ_PROVISIONING_2_EP = {
   , { 1, 28417, "Eltheric Hooch" }
   }
 -- Day 2
+-- Hagnar   2017-03-30 zig: D2
 , { { 1, 28398, "Venison Pasty" }
   , { 1, 28421, "Honey Rye" }
   }
@@ -267,11 +279,12 @@ local REQSEQ_PROVISIONING_3_AD = {
 -- Level 40-45 recipes, Al
 local REQSEQ_PROVISIONING_4_AD = {
 -- Day 1
--- Al 2017-03-29 zig:
+-- Al       2017-03-29 zig: D1
   { { 1, 33903, "Mammoth Snout Pie" }
   , { 1, 28473, "Two-Zephyr Tea" }
   }
 -- Day 2
+-- Al       2017-03-30 zig: D2
 , { { 1, 33909, "Skyrim Jazbay Crostata" }
   , { 1, 28513, "Blue Road Marathon" }
   }
@@ -289,6 +302,7 @@ local REQSEQ_PROVISIONING_5_DC = {
   , { 1, 28444, "Grandpa's Bedtime Tonic" }
   }
 -- Day 2
+-- Simone   2017-03-30 zig: D2
 , { { 1, 32160, "West Weald Corn Chowder" }
   , { 1, 28402, "Comely Wench Whisky" }
   }
