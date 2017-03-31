@@ -100,6 +100,8 @@ local REQSEQ_BLACKSMITH_10 = {
 -- Lilwen   2017-03-29 zig: D1
 -- Simone   2017-03-29 zig: D1
 -- Al       2017-03-30 zig: D2
+-- Lilwen   2017-03-31 zig: D3
+-- Hagnar   2017-03-31 zig: D3
   { { 1, 43562, "Rubedite Helm" }
   , { 1, 43535, "Rubedite Dagger" }
   , { 1, 43541, "Rubedite Pauldron" }
@@ -110,6 +112,7 @@ local REQSEQ_BLACKSMITH_10 = {
 -- Zhaksyr  2017-03-30 zig: D2
 -- Zecorwyn 2017-03-30 zig: D2
 -- Simone   2017-03-30 zig: D2
+-- Al       2017-03-31 zig: D3
 , { { 1, 43534, "Rubedite Greatsword" }
   , { 1, 43538, "Rubedite Sabatons" }
   , { 1, 43539, "Rubedite Gauntlets" }
@@ -119,6 +122,9 @@ local REQSEQ_BLACKSMITH_10 = {
 -- Al       2017-03-29 zig: D1
 -- Lilwen   2017-03-30 zig: D2
 -- Hagnar   2017-03-30 zig: D2
+-- Zhaksyr  2017-03-31 zig: D3
+-- Zecorwyn 2017-03-31 zig: D3
+-- Simone   2017-03-31 zig: D3
 , { { 1, 43531, "Rubedite Sword" }
   , { 1, 43537, "Rubedite Cuirass" }
   , { 1, 43540, "Rubedite Greaves" }
@@ -131,6 +137,8 @@ local REQSEQ_CLOTHIER_10 = {
 -- Zecorwyn 2017-03-29 zig: D1
 -- Simone   2017-03-29 zig: D1
 -- Al       2017-03-30 zig: D2
+-- Lilwen   2017-03-31 zig: D3
+-- Hagnar   2017-03-31 zig: D3
   { { 1, 43552, "Rubedo Leather Bracers" }
   , { 1, 43563, "Rubedo Leather Helmet" }
   , { 1, 43554, "Rubedo Leather Arm Cops" }
@@ -141,6 +149,7 @@ local REQSEQ_CLOTHIER_10 = {
 -- Zhaksyr  2017-03-30 zig: D2
 -- Zecorwyn 2017-03-30 zig: D2
 -- Simone   2017-03-30 zig: D2
+-- Al       2017-03-31 zig: D3
 , { { 1, 43544, "Ancestor Silk Shoes" }
   , { 1, 43564, "Ancestor Silk Hat" }
   , { 1, 43548, "Ancestor Silk Sash" }
@@ -149,6 +158,9 @@ local REQSEQ_CLOTHIER_10 = {
 -- Al       2017-03-29 zig: D1
 -- Lilwen   2017-03-30 zig: D2
 -- Hagnar   2017-03-30 zig: D2
+-- Zhaksyr  2017-03-31 zig: D3
+-- Zecorwyn 2017-03-31 zig: D3
+-- Simone   2017-03-31 zig: D3
 , { { 1, 43543, "Ancestor Silk Robe" }
   , { 1, 43546, "Ancestor Silk Breeches" }
   , { 1, 43547, "Ancestor Silk Epaulets" }
@@ -161,6 +173,8 @@ local REQSEQ_WOODWORKING_10 = {
 -- Zecorwyn 2017-03-29 zig: D1
 -- Simone   2017-03-29 zig: D1
 -- Al       2017-03-30 zig: D2
+-- Lilwen   2017-03-31 zig: D3
+-- Hagnar   2017-03-31 zig: D3
   { { 2, 43549, "Ruby Ash Bow" }
   , { 1, 43556, "Ruby Ash Shield" }
   }
@@ -169,6 +183,7 @@ local REQSEQ_WOODWORKING_10 = {
 -- Hagnar   2017-03-29 zig: D1
 -- Zhaksyr  2017-03-30 zig: D2
 -- Simone   2017-03-30 zig: D2
+-- Al       2017-03-31 zig: D3
 , { { 1, 43557, "Ruby Ash Inferno Staff" }
   , { 1, 43558, "Ruby Ash Ice Staff" }
   , { 1, 43559, "Ruby Ash Lightning Staff" }
@@ -177,6 +192,9 @@ local REQSEQ_WOODWORKING_10 = {
 -- Al       2017-03-29 zig: D1
 -- Lilwen   2017-03-30 zig: D2
 -- Hagnar   2017-03-30 zig: D2
+-- Zhaksyr  2017-03-31 zig: D3
+-- Zecorwyn 2017-03-31 zig: D3
+-- Simone   2017-03-31 zig: D3
 , { { 2, 43560, "Ruby Ash Restoration Staff" }
   , { 1, 43556, "Ruby Ash Shield" }
   }
@@ -186,6 +204,9 @@ local REQSEQ_ALCHEMY_10 = {
 -- Day 1
 -- Zhaksyr  2017-03-29 zig: D1
 -- Lilwen   2017-03-29 zig: D1
+-- Zecorwyn 2017-03-31 zig: D3
+-- Al       2017-03-31 zig: D3
+-- Hagnar   2017-03-31 zig: D3
   { { 1, 54340, "Essence of Magicka" }
   , { 3, 30165, "Nirnroot", crafted = false }
   }
@@ -201,6 +222,8 @@ local REQSEQ_ALCHEMY_10 = {
 -- Al       2017-03-29 zig: D1
 -- Hagnar   2017-03-29 zig: D1
 -- Simone   2017-03-30 zig: D2
+-- Zhaksyr  2017-03-31 zig: D3
+-- Lilwen   2017-03-31 zig: D3
 , { { 1, 44812, "Essence of Ravage Health" }
   , { 3, 64501, "Lorkhan's Tears", crafted = false }
   }
@@ -208,6 +231,7 @@ local REQSEQ_ALCHEMY_10 = {
 -- Al       2017-03-30 zig: D2
 -- Zecorwyn 2017-03-30 zig: D2
 -- Hagnar   2017-03-30 zig: D2
+-- Simone   2017-03-31 zig: D3
 , { { 1, 54339, "Essence of Health" }
   , { 3, 30165, "Nirnroot", crafted = false }
   }
@@ -219,6 +243,8 @@ local REQSEQ_ENCHANTING_10 = {
 -- Zecorwyn 2017-03-29 zig: D1
 -- Simone   2017-03-29 zig: D1
 -- Al       2017-03-30 zig: D2
+-- Lilwen   2017-03-31 zig: D3
+-- Hagnar   2017-03-31 zig: D3
   { { 1, 26588, "Superb Glyph of Stamina" }
   , { 1, 45850, "Ta" , crafted = false }
   }
@@ -228,6 +254,7 @@ local REQSEQ_ENCHANTING_10 = {
 -- Zhaksyr  2017-03-30 zig: D2
 -- Zecorwyn 2017-03-30 zig: D2
 -- Simone   2017-03-30 zig: D2
+-- Al       2017-03-31 zig: D3
 , { { 1, 26580, "Superb Glyph of Health" }
   , { 1, 64508, "Jehade", crafted = false }
   }
@@ -235,6 +262,9 @@ local REQSEQ_ENCHANTING_10 = {
 -- Al       2017-03-29 zig: D1
 -- Lilwen   2017-03-30 zig: D2
 -- Hagnar   2017-03-30 zig: D2
+-- Zhaksyr  2017-03-31 zig: D3
+-- Zecorwyn 2017-03-31 zig: D3
+-- Simone   2017-03-31 zig: D3
 , { { 1, 26582, "Superb Glyph of Magicka" }
   , { 1, 45831, "Oko", crafted = false }
   }
@@ -253,6 +283,7 @@ local REQSEQ_PROVISIONING_2_EP = {
   , { 1, 28421, "Honey Rye" }
   }
 -- Day 3
+-- Hagnar   2017-03-31 zig: D3
 , { { 1, 33552, "Redoran Peppered Melon" }
   , { 1, 28457, "Bitterlemon Tea" }
   }
@@ -271,6 +302,7 @@ local REQSEQ_PROVISIONING_3_AD = {
   , { 1, 33636, "Spiced Matze" }
   }
 -- Day 3
+-- Zecorwyn 2017-03-31 zig: D3
 , { { 1, 33520, "Elinhir Roast Antelope" }
   , { 1, 33642, "Sorry, Honey Lager" }
   }
@@ -289,6 +321,7 @@ local REQSEQ_PROVISIONING_4_AD = {
   , { 1, 28513, "Blue Road Marathon" }
   }
 -- Day 3
+-- Al       2017-03-31 zig: D3
 , { { 1, 33897, "Cyrodilic Cornbread" }
   , { 1, 28433, "Gods-Blind-Me" }
   }
@@ -307,6 +340,7 @@ local REQSEQ_PROVISIONING_5_DC = {
   , { 1, 28402, "Comely Wench Whisky" }
   }
 --Day 3
+-- Simone   2017-03-31 zig: D3
 , { { 1, 43088, "Millet-Stuffed Pork Loin" }
   , { 1, 33602, "Aetherial Tea" }
   }
@@ -317,6 +351,7 @@ local REQSEQ_PROVISIONING_5_DC = {
 local REQSEQ_PROVISIONING_6 = {
 -- Day 1
 -- Zhaksyr  2017-03-29 zig: D1
+-- Lilwen   2017-03-31 zig: D3
   { { 1, 68236, "Firsthold Fruit and Cheese Plate" }
   , { 1, 68260, "Muthsera's Remorse" }
   }
@@ -331,13 +366,14 @@ local REQSEQ_PROVISIONING_6 = {
   , { 1, 68257, "Markarth Mead" }
   }
 -- Day 3
-, { { 1, 68235, "Lilmoth Garlig Hagfish" }
+-- Zhaksyr  2017-03-31 zig: D3
+, { { 1, 68235, "Lilmoth Garlic Hagfish" }
   , { 1, 68263, "Hagraven's Tonic" }
   }
 -- Day 2
 -- Lilwen   2017-03-30 zig: D2
-, { { 1, "Argonian Saddle-Cured Rabbit" }
-  , { 1, "Sipping Imga Tonic" }
+, { { 1, 43142, "Argonian Saddle-Cured Rabbit" }
+  , { 1, 33698, "Sipping Imga Tonic" }
   }
 }
 
