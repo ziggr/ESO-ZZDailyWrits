@@ -1,45 +1,61 @@
 <GuiXml>
-    <Controls>
-        <TopLevelControl
-                hidden="true"
-                name="ZZDailyWritsUI"
-                movable="true"
-                mouseEnabled="true"
-                allowBringToTop="true"
-                clampedToScreen="true"
-                >
-            <Dimensions x="800" y="600" />
+  <Controls>
+    <TopLevelControl
+        hidden="true"
+        name="ZZDailyWritsUI"
+        movable="true"
+        mouseEnabled="true"
+        allowBringToTop="true"
+        clampedToScreen="true"
+        >
+      <Dimensions x="800" y="600" />
 
-            <OnMouseUp>ZZDailyWrits:SavePos()</OnMouseUp>
-            <!--
+      <OnMouseUp>ZZDailyWrits:SavePos()</OnMouseUp>
+      <!--
 
-            <OnUpdate>
-                ZZDailyWrits_Update()
-            </OnUpdate>
+      <OnUpdate>
+        ZZDailyWrits_Update()
+      </OnUpdate>
 
-            <OnInitialized>
-                ZZDailyWrits_Initialized()
-            </OnInitialized>
-            -->
+      <OnInitialized>
+        ZZDailyWrits_Initialized()
+      </OnInitialized>
+      -->
 
-            <Controls>
-                <Backdrop name="$(parent)BG"
-                        centerColor="000000"
-                        edgeColor="202020"
-                        >
-                    <AnchorFill />
-                    <Edge edgeSize="1" />
-                </Backdrop>
+      <Controls>
+        <Backdrop name="$(parent)BG"
+            centerColor="000000"
+            edgeColor="202020"
+            >
+          <AnchorFill />
+          <Edge edgeSize="1" />
+        </Backdrop>
 
-                <Label name="$(parent)Counter"
-                        font="ZoFontWindowTitle"
-                        color="CFDCBD"
-                        wrapMode="ELLIPSIS"
-                        verticalAlignment="TOP"
-                        text="ZZDailyWrits">
-                    <AnchorFill />
-                </Label>
-            </Controls>
-        </TopLevelControl>
-    </Controls>
+        <Label name="$(parent)_label_bs"
+            font="ZoFontGame"
+            color="CCCCCC"
+            text="bs">
+          <Anchor relativeTo="$(parent)"
+              relativePoint="TOPLEFT"
+              point="TOPLEFT"
+              offsetX="5"
+              offsetY="5" />
+          <Dimensions x="50" y="20" />
+        </Label>
+        <Label name="$(parent)_status_bs"
+            font="ZoFontGame"
+            color="CCCCCC"
+            text="??">
+          <Anchor relativeTo="$(parent)"
+              relativePoint="TOPLEFT"
+              point="TOPLEFT"
+              offsetX="60"
+              offsetY="5" />
+          <Dimensions x="50" y="20" />
+        </Label>
+
+
+      </Controls>
+    </TopLevelControl>
+  </Controls>
 </GuiXml>

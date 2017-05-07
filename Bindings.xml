@@ -1,9 +1,9 @@
 <Bindings>
-    <Layer name="SI_KEYBINDINGS_LAYER_GENERAL">
-        <Category name="ZZDailyWrits">
-            <Action name="ZZDailyWrits_DoIt">
-                <Up>ZZDailyWrits_DoIt()</Up>
-            </Action>
-        </Category>
-    </Layer>
+  <Layer name="SI_KEYBINDINGS_LAYER_GENERAL">
+    <Category name="ZZ Daily Writs">
+      <Action name="ZZDW_TOGGLE_VISIBILITY">
+        <Up>ZZDailyWrits.ToggleVisibility()</Up>
+      </Action>
+    </Category>
+  </Layer>
 </Bindings>
