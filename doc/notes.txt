@@ -1,0 +1,196 @@
+2017-04-20 zig: Simplify
+
+Just show 6 dots for current quest states:
+- quest ready to turn in (have inventory)
+- quest needs crafting
+- quest not present
+
+--------------------------
+
+1 char, 6 schools
+
+BS Q1 Q2 I1 I2 I3 I4
+CL Q1 Q2 I1 I2 I3 I4
+WW Q1 Q2 I1 I2 I3 I4
+AL Q1 Q2 I1 I2 I3 I4
+EN Q1 Q2 I1 I2 I3 I4
+PR Q1 Q2 I1 I2 I3 I4
+
+* School: BR CL WW AL EN PR
+* Quest status: Since prevous 10pm:
+  X  quest not yet acquired,
+         need to visit billboard
+  A  quest acquired, needs crafting,     anvil
+         need to visit crafting station
+  B  quest acquired, crafting completed, bag
+         need to visit turn-in station
+  V  quest turned in.                    checkmark
+
+* Inventory level for the next 4 quests
+    * have complete inventory       full circle
+    O missing at least one item     hollow/dim circle
+
+---
+Events:
+    quest acquisition/progress
+    item crafted (fills inventory status)
+    item sucked out of bag by quest progression (drains inventory status)
+    -- not sure if care: bag/bank/decon of items.
+
+--
+
+Data model:
+
+per-char
+    per-school
+        quest1 progress
+        quest2 progress
+        conversion function to map progress to one of above 4 states
+        QuestStatus(int 1 or 2) ⇒ enum status
+        timestamp of last status change so that we know when to reset after 10p
+
+        Inventory status
+
+
+constants
+    per school
+        quest id
+        inventory requirements in set
+
+---
+
+Learning from CraftStore about
+    quest IDs and progression
+    inventory taps for tooltips would also help
+
+CraftStore does not hardcode quest IDs. Instead it iterates over CURRENT quests
+and looks for those that are GetJournalQuestType(qId) == QUEST_TYPE_CRAFTING
+
+It looks for QUEST PROGRESSION and not actual bag inventory status. Since we're
+going to be PREDICTING future event status with inventory, we need more than
+this.
+
+So we'll be hardcoding PREDICTED REQUIRED INVENTORY for the inventory markers
+but using live quest status for the quest markers.
+
+for qID = i = 1,MAX_JOURNAL_QUESTS do (qId is really quest_index not quest_id) here.
+
+IsValidQuestIndex(number journalQuestIndex)
+    Returns: boolean isValid
+
+GetJournalQuestType(number journalQuestIndex)
+    Returns: number type
+    QUEST_TYPE_CRAFTING
+
+GetJournalQuestInfo(number journalQuestIndex)
+    Returns:
+       * 1 string  questName                        "Clothier Writ"
+         2 string  backgroundText                   "I've taken a contract..."
+       * 3 string  activeStepText                   "This writ is... Helmets, Arm Cops, and Bracers..."
+         4 number  activeStepType                   1
+         5 string  activeStepTrackerOverrideText    ""
+       * 6 boolean completed                        false
+         7 boolean tracked                          true
+         8 number  questLevel                       50
+         9 boolean pushed                           false
+        10 number  questType                        4
+        11 number  InstanceDisplayType InstanceDisplayType  0
+
+GetJournalQuestNumConditions(number journalQuestIndex, number stepIndex)
+    Returns: number conditionCount      4
+    stepIndex is always 1 for crafting dailies
+    returned conditionCount might vary depending on item count
+
+GetJournalQuestConditionInfo( number journalQuestIndex
+                            , number stepIndex
+                            , number conditionIndex )
+    Returns:
+        1 string  conditionText     "Craft Rubedo Leather Helmet 1/1"
+        2 number  current           1
+        3 number  max               1
+        4 boolean isFailCondition   false
+        5 boolean isComplete        false
+        6 boolean isCreditShared    false
+        7 boolean isVisible         true
+
+        1 string  conditionText     "Craft Rubedo Leather Arm Cops 0/1"
+        2 number  current           0
+        3 number  max               1
+        4 boolean isFailCondition   false
+        5 boolean isComplete        false
+        6 boolean isCreditShared    false
+        7 boolean isVisible         true
+
+
+function CS.GetQuest()
+  local function GetQuestCraft(qName)
+    local craftString={
+      [CRAFTING_TYPE_BLACKSMITHING]={'blacksmith','schmied','forge','forgeron'},
+      [CRAFTING_TYPE_CLOTHIER]={'cloth','schneider','tailleur'},
+      [CRAFTING_TYPE_ENCHANTING]={'enchant','verzauber','enchantement','enchanteur'},
+      [CRAFTING_TYPE_ALCHEMY]={'alchemist','alchemie','alchimie','alchimiste'},
+      [CRAFTING_TYPE_PROVISIONING]={'provision','versorg','cuisine','cuisinier'},
+      [CRAFTING_TYPE_WOODWORKING]={'woodwork','schreiner','travail du bois'}
+    }
+    for x, craft in pairs(craftString) do
+      for _,s in pairs(craft) do if string.find(string.lower(qName),s)then return x end end
+    end
+    return false
+  end
+  CS.Quest = {}
+  for qId = 1, MAX_JOURNAL_QUESTS do
+    if IsValidQuestIndex(qId) then
+      if GetJournalQuestType(qId) == QUEST_TYPE_CRAFTING then
+        local qName,_,activeText,_,_,completed = GetJournalQuestInfo(qId)
+        local craft = GetQuestCraft(qName)
+        if craft and not completed then
+          CS.Quest[craft] = {id = qId, name = ZOSF('|cFFFFFF<<C:1>>|r',qName), work = {}}
+          for cId = 1, GetJournalQuestNumConditions(qId,1) do
+            local text,current,maximum,_,complete = GetJournalQuestConditionInfo(qId,1,cId)
+            if text and text ~= ''and not complete then
+              if current == maximum then text = '|c00FF00'..text..'|r' end
+              CS.Quest[craft].work[cId] = text
+            end
+          end
+        elseif craft then CS.Quest[craft] = {id = qId, name = '|cFFFFFF'..qName..'|r', work = {[1] = activeText}} end
+      end
+    end
+  end
+end
+
+
+function CS.UpdateQuest(qId)
+  for _, quest in pairs(CS.Quest) do
+    if quest.id == qId then
+      local out = ''
+      local title = quest.name..'\n'
+      quest.work = {}
+      for cId = 1, GetJournalQuestNumConditions(qId,1) do
+        local text,current,maximum = GetJournalQuestConditionInfo(qId,1,cId)
+        if text and text ~= '' then
+          if current == maximum then text = '|c00FF00'..text..'|r' end
+          quest.work[cId] = text
+          out = out..text..'\n'
+        end
+      end
+      if DolgubonsWrits and CraftStoreFixed_DolgubonsWritsEndpoint then
+        if WritCreater.savedVars.tutorial then zo_callLater(function () CS.UpdateQuest(qId) end, 1000) return end
+        CraftStoreFixed_DolgubonsWritsEndpoint:SetText(out)
+        CraftStoreFixed_QuestText:SetText(title..out)
+      else
+        CraftStoreFixed_QuestText:SetText(title..out)
+      end
+      return
+    end
+  end
+end
+
+
+------------------------------------------------------------------------------
+Heh. PhaeroX Writ Status http://www.esoui.com/downloads/fileinfo.php?id=1639
+already does the beginnings of what I want. Sort of. Not quite. And it is a
+bit too simple, does not track state progression for quests, just boolean
+"complete". Nor does it offer helpful tooltips (what steps missing/next to do),
+or track multiple quests per day the way I double it all up.
+But it's still cool and good on 'em for writing it.
+
