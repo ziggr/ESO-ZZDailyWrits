@@ -107,14 +107,38 @@ function CharData:ScanJournal()
 --d(x)
         end
     end
-
-                        -- XXX Merge with previous quest_status list here
-                        -- XXX to retain previously turned-in
-                        -- XXX quests.
-
-    self.quest_status = quest_status
+                        -- Merge with previous quest_status list here
+                        -- to detect "needs turn-in" -> "turned in" edge.
+    for i, ct in ipairs(DW.CRAFTING_TYPE) do
+        self.quest_status[i] = self:MergeQuestStatus( self.quest_status[i]
+                                                    , quest_status[i] )
+    end
 --d("char_data.quest_status:  ct="..#self.quest_status)
 --d(self.quest_status[2])
+end
+
+-- Once a quest vanishes from our list, assume it was turned in.
+function CharData:MergeQuestStatus(prev, curr)
+    if curr then return curr end
+    if not prev then return curr end
+
+                        -- We needed to turn it in, and now it's gone.
+                        -- Assume it was indeed turned in.
+    if prev.state == DW.STATE_2_NEEDS_TURN_IN then
+        local quest_status_turned_in = DW.QuestStatus:New()
+        quest_status_turned_in.state = DW.STATE_3_TURNED_IN
+        quest_status_turned_in.text  = ""
+        quest_status_turned_in.ts    = GetTimeStamp()
+        return quest_status_turned_in
+    elseif prev.state == DW.STATE_3_TURNED_IN then
+                        -- Latch "turned in"
+        return prev
+    end
+
+                        -- It's gone, and last time we saw it the quest
+                        -- needed more than just turning in. Not sure
+                        -- what happened, assume we need to acquire it again.
+    return nil
 end
 
 -- GetJournalQuestInfo() returns:
@@ -199,33 +223,43 @@ end
 
 -- Return a quest's conditions as a single QuestStatus instance.
 function CharData:AccumulateCondition(quest_index)
+local DEBUG = function() end
+--if (quest_index == 9) then DEBUG = function(x) d(x) end end
+
     local text_list = {}
-    local status    = DW.STATE_1_NEEDS_CRAFTING
+    local state     = DW.STATE_1_NEEDS_CRAFTING
 
                         -- Accumulate quest's current status, which always seems to
                         -- be the status of the last/highest-indexed step.
     local step_ct = GetJournalQuestNumSteps(quest_index)
+DEBUG("step_ct:"..tostring(step_ct))
     local step_index = step_ct
     local sinfo = { GetJournalQuestStepInfo(quest_index, step_index) }
+DEBUG("GetJournalQuestStepInfo()")
+DEBUG(sinfo)
 -- d(sinfo)
     local condition_ct = sinfo[DW.JQSI.num_conditions]
-    for ci = 1, condition_ct do
-        local cinfo = { GetJournalQuestConditionInfo(quest_index, step_index, ci) }
--- d("Condition " .. tostring(ci))
--- d(cinfo)
-                        -- If we have not completed all the required counts
-                        -- for this condition, then its text matters.
-        if cinfo[DW.JQCI.is_visible]
-                and ( cinfo[DW.JQCI.current] < cinfo[DW.JQCI.max] ) then
-                local c_text = cinfo[DW.JQCI.condition_text]
-            table.insert(text_list, c_text)
-            status = DW.StateMax(status, self:ConditionTextToState(c_text))
+    if condition_ct == 0 then -- It's already partially turned in, "Sign Delivery Manifest" time.
+        state = DW.STATE_2_NEEDS_TURN_IN
+    else
+        for ci = 1, condition_ct do
+            local cinfo = { GetJournalQuestConditionInfo(quest_index, step_index, ci) }
+    DEBUG("Condition " .. tostring(ci))
+    DEBUG(cinfo)
+                            -- If we have not completed all the required counts
+                            -- for this condition, then its text matters.
+            if cinfo[DW.JQCI.is_visible]
+                    and ( cinfo[DW.JQCI.current] < cinfo[DW.JQCI.max] ) then
+                    local c_text = cinfo[DW.JQCI.condition_text]
+                table.insert(text_list, c_text)
+                state = DW.StateMax(state, self:ConditionTextToState(c_text))
+            end
         end
     end
 
     local quest_status = DW.QuestStatus:New()
-    quest_status.status = status
-    quest_status.text   = table.concat(text_list, "\n")
+    quest_status.state = state
+    quest_status.text  = table.concat(text_list, "\n")
     return quest_status
 end
 
@@ -344,14 +378,9 @@ end
 function DW:DisplayCharData()
     for _,ct in ipairs(DW.CRAFTING_TYPE) do
         local quest_status = self.char_data.quest_status[ct.order]
-d("crafting_type")
-d(ct)
-d("quest_status")
-d(quest_status)
-
         local ui = ZZDailyWritsUI:GetNamedChild("_status_"..ct.abbr)
         if quest_status then
-            ui:SetText(quest_status.status.id)
+            ui:SetText(quest_status.state.id)
 --d("UI set "..ct.abbr)
         else
             ui:SetText(DW.STATE_0_NEEDS_ACQUIRE.id)
