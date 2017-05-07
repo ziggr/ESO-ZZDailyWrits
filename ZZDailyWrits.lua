@@ -13,10 +13,10 @@ DW.default         = {
 -- Use these values for craft_type
 --
 DW.CRAFTING_TYPE = {
-  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING , quest_name = "Blacksmithing Writ"}
+  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING , quest_name = "Blacksmith Writ"}
 , { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER      , quest_name = "Clothier Writ" }
-, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING   , quest_name = "Woodworking Writ"}
-, { abbr = "al", order = 4, ct = CRAFTING_TYPE_ALCHEMY       , quest_name = "Alchemy Writ"}
+, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING   , quest_name = "Woodworker Writ"}
+, { abbr = "al", order = 4, ct = CRAFTING_TYPE_ALCHEMY       , quest_name = "Alchemist Writ"}
 , { abbr = "en", order = 5, ct = CRAFTING_TYPE_ENCHANTING    , quest_name = "Enchanter Writ"}
 , { abbr = "pr", order = 6, ct = CRAFTING_TYPE_PROVISIONING  , quest_name = "Provisioner Writ"}
 }
@@ -103,8 +103,8 @@ function CharData:ScanJournal()
         local x = self:AbsorbQuest(qi)
         if x then
             quest_status[x.crafting_type.order] = x.quest_status
-d("Set qs["..tostring(x.crafting_type.order).."]")
-d(x)
+--d("Set qs["..tostring(x.crafting_type.order).."]")
+--d(x)
         end
     end
 
@@ -113,8 +113,8 @@ d(x)
                         -- XXX quests.
 
     self.quest_status = quest_status
-d("char_data.quest_status:  ct="..#self.quest_status)
-d(self.quest_status[2])
+--d("char_data.quest_status:  ct="..#self.quest_status)
+--d(self.quest_status[2])
 end
 
 -- GetJournalQuestInfo() returns:
@@ -155,6 +155,11 @@ DW.JQCI = {
 -- Fetch a quest's data from server. If it's a crafting quest,
 -- store its quest_status in the appropriate self.quest_status[] slot.
 function CharData:AbsorbQuest(quest_index)
+                        -- SURPRISE there is something broken in
+                        -- alchemy writs right now, GetJournalQuestRepeatType()
+                        -- and GetJournalQuestInfo() can return nothing but
+                        -- 0/nil/"" for alchemy writs. Because ZOS hates me.
+
                         -- Only daily quests matter.
     local rt = GetJournalQuestRepeatType(quest_index)
     if rt ~= QUEST_REPEAT_DAILY then
@@ -164,7 +169,9 @@ function CharData:AbsorbQuest(quest_index)
                         -- Only daily CRAFTING quests matter.
     local qinfo = { GetJournalQuestInfo(quest_index) }
     if qinfo[DW.JQI.quest_type] ~= QUEST_TYPE_CRAFTING then
-        -- d(tostring(quest_index).." not crafting "..tostring(qinfo[DW.JQI.quest_type]))
+        -- d(  tostring(quest_index).." not crafting "
+        --   ..tostring(qinfo[DW.JQI.quest_type])
+        --   .." "..tostring(qinfo[DW.JQI.quest_name]) )
         return
     end
                         -- Find correct index into CharData.quest_status[]
@@ -173,7 +180,6 @@ function CharData:AbsorbQuest(quest_index)
         d("quest_name matches no index: "..tostring(qinfo[DW.JQI.quest_name]))
         return
     end
-
                         -- Accumulate conditions into a quest_status.
     local quest_status = self:AccumulateCondition(quest_index)
 
@@ -259,6 +265,19 @@ function DW:Initialize()
                             , nil
                             , self.default
                             )
+    local event_id_list = { EVENT_QUEST_ADDED       -- 0 needs acquire -> 1 or 2
+                          , EVENT_CRAFT_COMPLETED   -- 1 needs craft   -> 2
+                          , EVENT_QUEST_COMPLETE    -- 2 needs turn in -> 3
+                          }
+    for _, event_id in ipairs(event_id_list) do
+        EVENT_MANAGER:RegisterForEvent( DW.name
+                                      , event_id
+                                      , function()
+                                            ZZDailyWrits.RefreshDataAndUI()
+                                        end
+                                      )
+    end
+
     self:RestorePos()
 end
 
@@ -299,8 +318,7 @@ function ZZDailyWrits.ToggleVisibility()
     local h = DWUI:IsHidden()
     if h then
         DW:RestorePos()
-        DW.char_data:ScanJournal()
-        DW:DisplayCharData()
+        DW.RefreshDataAndUI()
     end
     DWUI:SetHidden(not h)
 end
@@ -317,15 +335,27 @@ function DW_Initialized()
 end
 --]]
 
+-- Fetch current data. Display it.
+function ZZDailyWrits.RefreshDataAndUI()
+    DW.char_data:ScanJournal()
+    DW:DisplayCharData()
+end
+
 function DW:DisplayCharData()
     for _,ct in ipairs(DW.CRAFTING_TYPE) do
         local quest_status = self.char_data.quest_status[ct.order]
-        if quest_status then
-            local ui = ZZDailyWritsUI:GetNamedChild("_status_"..ct.abbr)
-            ui:SetText(quest_status.status.id)
-d("UI set "..ct.abbr)
-        end
+d("crafting_type")
+d(ct)
+d("quest_status")
+d(quest_status)
 
+        local ui = ZZDailyWritsUI:GetNamedChild("_status_"..ct.abbr)
+        if quest_status then
+            ui:SetText(quest_status.status.id)
+--d("UI set "..ct.abbr)
+        else
+            ui:SetText(DW.STATE_0_NEEDS_ACQUIRE.id)
+        end
     end
 end
 

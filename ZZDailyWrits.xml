@@ -8,7 +8,7 @@
         allowBringToTop="true"
         clampedToScreen="true"
         >
-      <Dimensions x="65" y="130" />
+      <Dimensions x="80" y="130" />
 
       <OnMouseUp>ZZDailyWrits:SavePos()</OnMouseUp>
       <!--
