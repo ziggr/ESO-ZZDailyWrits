@@ -1,3 +1,25 @@
+2017-05-07 zig:
+
+Why are alchemy and clothing writs "disappearing" ?
+--
+They just lose all values from
+  GetJournalQuestRepeatType(),
+  GetJournalQuestInfo(), and other functions.
+
+Seems to occur when we turn in some OTHER writ, too.
+
+TODO maybe:
+- color red for needs crafting
+- retain in SavedVariables so I can see "done" all day once turned in.
+  current resetting to "needs acquire" after any reloadui sucks.
+- icons? Or wider area for less abbreviated text.
+
+
+
+
+
+-----------------------
+
 2017-04-20 zig: Simplify
 
 Just show 6 dots for current quest states:
