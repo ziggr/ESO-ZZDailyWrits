@@ -8,7 +8,7 @@
         allowBringToTop="true"
         clampedToScreen="true"
         >
-      <Dimensions x="800" y="600" />
+      <Dimensions x="65" y="130" />
 
       <OnMouseUp>ZZDailyWrits:SavePos()</OnMouseUp>
       <!--
@@ -31,26 +31,105 @@
           <Edge edgeSize="1" />
         </Backdrop>
 
-        <Label name="$(parent)_label_bs"
-            font="ZoFontGame"
-            color="CCCCCC"
-            text="bs">
+        <Label name="$(parent)_label_bs" text="bs" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
-              relativePoint="TOPLEFT"
-              point="TOPLEFT"
               offsetX="5"
-              offsetY="5" />
+              offsetY="5"
+              relativePoint="TOPLEFT"
+              point="TOPLEFT" />
           <Dimensions x="50" y="20" />
         </Label>
         <Label name="$(parent)_status_bs"
-            font="ZoFontGame"
-            color="CCCCCC"
-            text="??">
+            text="??" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
-              relativePoint="TOPLEFT"
-              point="TOPLEFT"
-              offsetX="60"
-              offsetY="5" />
+              offsetX="40"
+              offsetY="5"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="50" y="20" />
+        </Label>
+
+        <Label name="$(parent)_label_cl" text="cl" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="5"
+              offsetY="25"
+              relativePoint="TOPLEFT" point="TOPLEFT" />
+          <Dimensions x="50" y="20" />
+        </Label>
+        <Label name="$(parent)_status_cl"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="40"
+              offsetY="25"
+              relativePoint="TOPLEFT" point="TOPLEFT" />
+          <Dimensions x="50" y="20" />
+        </Label>
+
+        <Label name="$(parent)_label_ww" text="ww" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="5"
+              offsetY="45"
+              relativePoint="TOPLEFT" point="TOPLEFT" />
+          <Dimensions x="50" y="20" />
+        </Label>
+        <Label name="$(parent)_status_ww"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="40"
+              offsetY="45"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="50" y="20" />
+        </Label>
+
+        <Label name="$(parent)_label_al" text="al" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="5"
+              offsetY="65"
+              relativePoint="TOPLEFT" point="TOPLEFT" />
+          <Dimensions x="50" y="20" />
+        </Label>
+        <Label name="$(parent)_status_al"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="40"
+              offsetY="65"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="50" y="20" />
+        </Label>
+
+        <Label name="$(parent)_label_en" text="en" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="5"
+              offsetY="85"
+              relativePoint="TOPLEFT" point="TOPLEFT" />
+          <Dimensions x="50" y="20" />
+        </Label>
+        <Label name="$(parent)_status_en"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="40"
+              offsetY="85"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="50" y="20" />
+        </Label>
+
+        <Label name="$(parent)_label_pr" text="pr" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="5"
+              offsetY="105"
+              relativePoint="TOPLEFT" point="TOPLEFT" />
+          <Dimensions x="50" y="20" />
+        </Label>
+        <Label name="$(parent)_status_pr"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="40"
+              offsetY="105"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
           <Dimensions x="50" y="20" />
         </Label>
 
