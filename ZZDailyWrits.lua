@@ -118,7 +118,8 @@ function CharData:ScanJournal()
                         -- to detect "needs turn-in" -> "turned in" edge.
     for i, ct in ipairs(DW.CRAFTING_TYPE) do
         self.quest_status[i] = self:MergeQuestStatus( self.quest_status[i]
-                                                    , quest_status[i] )
+                                                    , quest_status[i]
+                                                    , ct )
     end
 --d("char_data.quest_status:  ct="..#self.quest_status)
 --d(self.quest_status[2])
@@ -140,40 +141,55 @@ end
 
 
 -- Once a quest vanishes from our list, assume it was turned in.
-function CharData:MergeQuestStatus(prev, curr)
-    if not prev then return curr end
+-- crafting_type is here solely for debugging.
+function CharData:MergeQuestStatus(prev, curr, crafting_type)
+    if not prev then
+d(crafting_type.abbr.." curr: !prev")
+        return curr
+    end
 
                         -- Do not trust undated history.
-    if not prev.acquired_ts then return curr end
+    if not prev.acquired_ts then
+d(crafting_type.abbr.." curr: !prev.ts")
+        return curr
+    end
 
                         -- Is the previous status from a quest
                         -- before the most recent daily reset?
                         -- If so, then ignore it in favor of
                         -- whatever we have now (even if curr == nil).
-    if prev.acquired_ts < self:ResetTS() then return curr end
+    if prev.acquired_ts < self:ResetTS() then
+d(crafting_type.abbr.." curr: prev.ts="..tostring(prev.acquired_ts).." < reset_ts="..tostring(self:ResetTS()))
+        return curr
+    end
 
                         -- If no change in state, prefer previous
                         -- because its timestamp is closer to when
                         -- the state change actually occurred.
-    if curr and (prev.state == curr.state) then return prev end
-
-                        -- We needed to turn it in, and now it's gone.
-                        -- Assume it was indeed turned in.
-    if prev.state == DW.STATE_2_NEEDS_TURN_IN then
-        local quest_status_turned_in = DW.QuestStatus:New()
-        quest_status_turned_in.state = DW.STATE_3_TURNED_IN
-        quest_status_turned_in.text  = ""
-        quest_status_turned_in.ts    = GetTimeStamp()
-        return quest_status_turned_in
-    elseif prev.state == DW.STATE_3_TURNED_IN then
-                        -- Latch "turned in"
+    if curr and (prev.state == curr.state) then
+d(crafting_type.abbr.." prev: no change")
         return prev
     end
 
-                        -- It's gone, and last time we saw it the quest
-                        -- needed more than just turning in. Not sure
-                        -- what happened, assume we need to acquire it again.
-    return nil
+                        -- We needed to turn it in, and now it's gone.
+                        -- Assume it was indeed turned in.
+    if not curr then
+        if (prev.state == DW.STATE_2_NEEDS_TURN_IN) then
+d(crafting_type.abbr.." turned in:")
+            local quest_status_turned_in       = DW.QuestStatus:New()
+            quest_status_turned_in.state       = DW.STATE_3_TURNED_IN
+            quest_status_turned_in.text        = ""
+            quest_status_turned_in.acquired_ts = GetTimeStamp()
+            return quest_status_turned_in
+        elseif prev.state == DW.STATE_3_TURNED_IN then
+                            -- Latch "turned in"
+d(crafting_type.abbr.." latched turned in:")
+            return prev
+        end
+    end
+
+d(crafting_type.abbr.." curr:")
+    return curr
 end
 
 -- GetJournalQuestInfo() returns:
@@ -326,7 +342,7 @@ end
 function CharData:WriteSavedVariables()
     local quest_status_list = {}
     for i, ct in ipairs(DW.CRAFTING_TYPE) do
-        quest_status_list[i] = DW.QuestStatus:ToSaved(self.quest_status[i])
+        quest_status_list[i] = DW.QuestStatus:ToSaved(self.quest_status[i], ct)
     end
     DW.savedVariables.char_data = quest_status_list
 end
@@ -340,11 +356,14 @@ function DW.QuestStatus:FromSaved(saved)
     return qs
 end
 
-function DW.QuestStatus:ToSaved(quest_status)
+-- crafting_type is solely for debugging, its abbr written to SavedVariables
+-- to make them easier for humans to read.
+function DW.QuestStatus:ToSaved(quest_status, crafting_type)
     if not quest_status then return nil end
-    local saved = {   state       = quest_status.state.order
+    local saved = { state       = quest_status.state.order
                   , text        = quest_status.text
                   , acquired_ts = quest_status.acquired_ts
+                  , abbr        = crafting_type.abbr
                   }
     return saved
 end
