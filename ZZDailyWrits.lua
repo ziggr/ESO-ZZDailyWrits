@@ -3,10 +3,10 @@ local DW = ZZDailyWrits
 
 DW.name            = "ZZDailyWrits"
 DW.version         = "2.7.1"
-DW.savedVarVersion = 1
-DW.default         = {
-    position = {350,100}
-}
+DW.savedVarVersion = 2
+DW.default         = { position  = {350,100}
+                     , char_data = {}
+                     }
 
 -- Sequence the writs in an order I prefer.
 --
@@ -22,6 +22,7 @@ DW.CRAFTING_TYPE = {
 }
 
 local DWUI = nil
+
 
 
 -- Quest states --------------------------------------------------------------
@@ -46,6 +47,12 @@ DW.STATE_2_NEEDS_TURN_IN    = { id = "turn in", order = 2, color = "33FF33" }
                         -- Quest completed. Done for the day.
                         -- "Checkmark" icon.
 DW.STATE_3_TURNED_IN        = { id = "done",    order = 3, color = "AAAAAA" }
+DW.STATE_ORDERED = {
+  [DW.STATE_0_NEEDS_ACQUIRE .order] = DW.STATE_0_NEEDS_ACQUIRE
+, [DW.STATE_1_NEEDS_CRAFTING.order] = DW.STATE_1_NEEDS_CRAFTING
+, [DW.STATE_2_NEEDS_TURN_IN .order] = DW.STATE_2_NEEDS_TURN_IN
+, [DW.STATE_3_TURNED_IN     .order] = DW.STATE_3_TURNED_IN
+}
 
 function DW.StateMax(a, b)
     if a.order < b.order then
@@ -117,10 +124,38 @@ function CharData:ScanJournal()
 --d(self.quest_status[2])
 end
 
+-- When did the daily crafting writs reset? 10pm US Pacific Standard Time
+function CharData:ResetTS()
+                        -- 10pm US Pacific Standard Time
+                        -- January 1, 2017.
+                        -- 2017-01-01T22:00:00 -0800
+    local start_ts    = 1483336800
+    local now_ts      = GetTimeStamp()
+    local sec_since   = now_ts - start_ts
+    local sec_per_day = 24*60*60
+    local days_since  = math.floor(sec_since / sec_per_day)
+    local prev_reset_ts = (days_since * sec_per_day) + start_ts
+    return prev_reset_ts
+end
+
+
 -- Once a quest vanishes from our list, assume it was turned in.
 function CharData:MergeQuestStatus(prev, curr)
-    if curr then return curr end
     if not prev then return curr end
+
+                        -- Do not trust undated history.
+    if not prev.acquired_ts then return curr end
+
+                        -- Is the previous status from a quest
+                        -- before the most recent daily reset?
+                        -- If so, then ignore it in favor of
+                        -- whatever we have now (even if curr == nil).
+    if prev.acquired_ts < self:ResetTS() then return curr end
+
+                        -- If no change in state, prefer previous
+                        -- because its timestamp is closer to when
+                        -- the state change actually occurred.
+    if curr and (prev.state == curr.state) then return prev end
 
                         -- We needed to turn it in, and now it's gone.
                         -- Assume it was indeed turned in.
@@ -257,9 +292,10 @@ DEBUG(sinfo)
         end
     end
 
-    local quest_status = DW.QuestStatus:New()
-    quest_status.state = state
-    quest_status.text  = table.concat(text_list, "\n")
+    local quest_status       = DW.QuestStatus:New()
+    quest_status.state       = state
+    quest_status.text        = table.concat(text_list, "\n")
+    quest_status.acquired_ts = GetTimeStamp()
     return quest_status
 end
 
@@ -272,6 +308,45 @@ function CharData:ConditionTextToState(condition_text)
     else
         return DW.STATE_1_NEEDS_CRAFTING
     end
+end
+
+-- File I/O ------------------------------------------------------------------
+
+
+function CharData:ReadSavedVariables()
+    local saved = DW.savedVariables
+    if not saved.char_data then return end
+    local quest_status_list = {}
+    for i, ct in ipairs(DW.CRAFTING_TYPE) do
+        quest_status_list[i] = DW.QuestStatus:FromSaved(saved.char_data[i])
+    end
+    self.quest_status = quest_status_list
+end
+
+function CharData:WriteSavedVariables()
+    local quest_status_list = {}
+    for i, ct in ipairs(DW.CRAFTING_TYPE) do
+        quest_status_list[i] = DW.QuestStatus:ToSaved(self.quest_status[i])
+    end
+    DW.savedVariables.char_data = quest_status_list
+end
+
+function DW.QuestStatus:FromSaved(saved)
+    if not saved then return nil end
+    local qs       = DW.QuestStatus:New()
+    qs.state       = DW.STATE_ORDERED[saved.state]
+    qs.text        = saved.text
+    qs.acquired_ts = saved.acquired_ts
+    return qs
+end
+
+function DW.QuestStatus:ToSaved(quest_status)
+    if not quest_status then return nil end
+    local saved = {   state       = quest_status.state.order
+                  , text        = quest_status.text
+                  , acquired_ts = quest_status.acquired_ts
+                  }
+    return saved
 end
 
 -- Init ----------------------------------------------------------------------
@@ -293,12 +368,15 @@ function DW:Initialize()
     ZO_CreateStringId("SI_BINDING_NAME_ZZDW_TOGGLE_VISIBILITY", "Show/Hide")
 
     --EVENT_MANAGER:UnregisterForEvent(self.name, EVENT_ADD_ON_LOADED)
-    self.savedVariables = ZO_SavedVars:NewAccountWide(
+    self.savedVariables = ZO_SavedVars:New(
                               "ZZDailyWritsVars"
                             , self.savedVarVersion
                             , nil
                             , self.default
                             )
+
+    DW.char_data:ReadSavedVariables()
+
     local event_id_list = { EVENT_QUEST_ADDED       -- 0 needs acquire -> 1 or 2
                           , EVENT_CRAFT_COMPLETED   -- 1 needs craft   -> 2
                           , EVENT_QUEST_COMPLETE    -- 2 needs turn in -> 3
@@ -372,6 +450,7 @@ end
 -- Fetch current data. Display it.
 function ZZDailyWrits.RefreshDataAndUI()
     DW.char_data:ScanJournal()
+    DW.char_data:WriteSavedVariables()
     DW:DisplayCharData()
 end
 
