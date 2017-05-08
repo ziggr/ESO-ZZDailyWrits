@@ -8,7 +8,7 @@
         allowBringToTop="true"
         clampedToScreen="true"
         >
-      <Dimensions x="80" y="130" />
+      <Dimensions x="130" y="130" />
 
       <OnMouseUp>ZZDailyWrits:SavePos()</OnMouseUp>
       <!--
@@ -46,7 +46,7 @@
               offsetY="5"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
-          <Dimensions x="50" y="20" />
+          <Dimensions x="80" y="20" />
         </Label>
 
         <Label name="$(parent)_label_cl" text="cl" font="ZoFontGame" color="CCCCCC" >
@@ -62,7 +62,7 @@
               offsetX="40"
               offsetY="25"
               relativePoint="TOPLEFT" point="TOPLEFT" />
-          <Dimensions x="50" y="20" />
+          <Dimensions x="80" y="20" />
         </Label>
 
         <Label name="$(parent)_label_ww" text="ww" font="ZoFontGame" color="CCCCCC" >
@@ -79,7 +79,7 @@
               offsetY="45"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
-          <Dimensions x="50" y="20" />
+          <Dimensions x="80" y="20" />
         </Label>
 
         <Label name="$(parent)_label_al" text="al" font="ZoFontGame" color="CCCCCC" >
@@ -96,7 +96,7 @@
               offsetY="65"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
-          <Dimensions x="50" y="20" />
+          <Dimensions x="80" y="20" />
         </Label>
 
         <Label name="$(parent)_label_en" text="en" font="ZoFontGame" color="CCCCCC" >
@@ -113,7 +113,7 @@
               offsetY="85"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
-          <Dimensions x="50" y="20" />
+          <Dimensions x="80" y="20" />
         </Label>
 
         <Label name="$(parent)_label_pr" text="pr" font="ZoFontGame" color="CCCCCC" >
@@ -130,7 +130,7 @@
               offsetY="105"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
-          <Dimensions x="50" y="20" />
+          <Dimensions x="80" y="20" />
         </Label>
 
 

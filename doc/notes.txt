@@ -10,9 +10,10 @@ Seems to occur when we turn in some OTHER writ, too.
 
 TODO maybe:
 - color red for needs crafting
+- icons? Or wider area for less abbreviated text.
+- tooltips with stuff-to-craft
 - retain in SavedVariables so I can see "done" all day once turned in.
   current resetting to "needs acquire" after any reloadui sucks.
-- icons? Or wider area for less abbreviated text.
 
 
 

@@ -29,23 +29,23 @@ local DWUI = nil
                         -- Not started
                         -- Need to visit a billboard to acquire quest.
                         -- "X" icon.
-DW.STATE_0_NEEDS_ACQUIRE    = { id = "acqr", order = 0 }
+DW.STATE_0_NEEDS_ACQUIRE    = { id = "acquire", order = 0, color = "CCCCCC" }
 
                         -- Acquired, but at least one item needs to be
                         -- crafted before turnining in.
                         -- Need to visit a crafting station to
                         -- make things.
                         -- "Anvil" icon.
-DW.STATE_1_NEEDS_CRAFTING   = { id = "crft", order = 1 }
+DW.STATE_1_NEEDS_CRAFTING   = { id = "craft",   order = 1, color = "FF3333" }
 
                         -- Crafting of all items completed.
                         -- Need to visit turn-in station.
                         -- "Bag" icon
-DW.STATE_2_NEEDS_TURN_IN    = { id = "turn", order = 2 }
+DW.STATE_2_NEEDS_TURN_IN    = { id = "turn in", order = 2, color = "33FF33" }
 
                         -- Quest completed. Done for the day.
                         -- "Checkmark" icon.
-DW.STATE_3_TURNED_IN        = { id = "done", order = 3 }
+DW.STATE_3_TURNED_IN        = { id = "done",    order = 3, color = "AAAAAA" }
 
 function DW.StateMax(a, b)
     if a.order < b.order then
@@ -377,14 +377,19 @@ end
 
 function DW:DisplayCharData()
     for _,ct in ipairs(DW.CRAFTING_TYPE) do
+                        -- What state to display? Default to "acquire" if we
+                        -- haven't recorded anything for this crafting type.
         local quest_status = self.char_data.quest_status[ct.order]
-        local ui = ZZDailyWritsUI:GetNamedChild("_status_"..ct.abbr)
+        local state        = DW.STATE_0_NEEDS_ACQUIRE
         if quest_status then
-            ui:SetText(quest_status.state.id)
---d("UI set "..ct.abbr)
-        else
-            ui:SetText(DW.STATE_0_NEEDS_ACQUIRE.id)
+            state = quest_status.state
         end
+
+        local ui_status = ZZDailyWritsUI:GetNamedChild("_status_"..ct.abbr)
+        local ui_label  = ZZDailyWritsUI:GetNamedChild("_label_" ..ct.abbr)
+
+        ui_status:SetText("|c"..state.color..state.id.."|r")
+        ui_label:SetText( "|c"..state.color..ct.abbr .."|r")
     end
 end
 
