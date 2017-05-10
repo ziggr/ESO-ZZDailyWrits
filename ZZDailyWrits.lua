@@ -105,13 +105,18 @@ end
 -- Scan the "Quest Journal" for active crafting quests.
 function CharData:ScanJournal()
     local quest_ct = GetNumJournalQuests()
+    local seen_quest_ct = 0
     local quest_status = {}
-    for qi = 1, quest_ct do
+    for qi = 1, MAX_JOURNAL_QUESTS do
         local x = self:AbsorbQuest(qi)
         if x then
             quest_status[x.crafting_type.order] = x.quest_status
 --d("Set qs["..tostring(x.crafting_type.order).."]")
 --d(x)
+                        -- +++ Early-exit loop once we've seen
+                        -- +++ all the quests in the journal.
+            seen_quest_ct = seen_quest_ct + 1
+            if quest_ct <= seen_quest_ct then break end
         end
     end
                         -- Merge with previous quest_status list here
@@ -179,7 +184,7 @@ d(crafting_type.abbr.." turned in:")
             local quest_status_turned_in       = DW.QuestStatus:New()
             quest_status_turned_in.state       = DW.STATE_3_TURNED_IN
             quest_status_turned_in.text        = ""
-            quest_status_turned_in.acquired_ts = GetTimeStamp()
+            quest_status_turned_in.acquired_ts = prev.acquired_ts
             return quest_status_turned_in
         elseif prev.state == DW.STATE_3_TURNED_IN then
                             -- Latch "turned in"
@@ -188,7 +193,9 @@ d(crafting_type.abbr.." latched turned in:")
         end
     end
 
-d(crafting_type.abbr.." curr:")
+d(crafting_type.abbr.." curr: using prev.ts="..tostring(prev.acquired_ts)
+.."  was curr.ts="..tostring(curr.acquired_ts))
+    curr.acquired_ts = prev.acquired_ts
     return curr
 end
 

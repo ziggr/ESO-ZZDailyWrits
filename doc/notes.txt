@@ -1,3 +1,49 @@
+2017-05-09 zig:
+- *ACQUIRE* ts: don't roll this forward for other state changes
+  and change "done" to "acquire" if the "done" TS is from yesterday
+  this ough to help with the "heavy crafting days" where I do two
+  days' of writs in one batch.
+
+- comment out the Merge debug strings. Annoying. But leave 'em around
+  in case the above work breaks something.
+
+- solve the disappearing provisioning/alchemy/random quest bug.
+  The quests are there SOMEHOW. CraftStore sees 'em enough to display
+  the "Deliver to XXX in Belkarth" panel.
+
+-----
+2017-05-10 zig:
+Zh quest ID
+GetNumJournalQuests() => 9
+1 For King and Glory
+2 A Treasure in Need of a Home
+3 Of Sentimental Value
+4 Provisioner Writ
+5 Enchanter Writ
+6 Alchemist Writ
+7 Clothier Writ
+8 Blacksmith Writ
+9 Woodworker Writ
+-- turn in provisioner
+-- Ayep, bug hits, "ww" now erroneously displays "done"
+GetNumJournalQuests() => 9
+1 For King and Glory
+2 A Treasure in Need of a Home
+3 Of Sentimental Value
+4 => empty strings
+5 Enchanter Writ
+6 Alchemist Writ
+7 Clothier Writ
+8 Blacksmith Writ
+9 Woodworker Writ
+
+AHA so the indexes don't slide down when you complete an interior element.
+You need to iterate until you find GetNumJournalQuests()'s worth of non-null quests.
+
+Looping over all MAX_JOURNAL_QUESTS (=25) instead of GetNumJournalQuests() (=8) fixes the problem. Bonus points for early-exit once you've seen all GetNumJournalQuests() (=8) non-null quest entries.
+
+-----
+
 2017-05-07 zig:
 
 Why are alchemy and clothing writs "disappearing" ?
