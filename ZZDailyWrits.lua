@@ -122,7 +122,7 @@ function CharData:ScanJournal()
                         -- Merge with previous quest_status list here
                         -- to detect "needs turn-in" -> "turned in" edge.
     for i, ct in ipairs(DW.CRAFTING_TYPE) do
-        self.quest_status[i] = self:MergeQuestStatus( self.quest_status[i]
+        self.quest_status[i] = self:StateTransition( self.quest_status[i]
                                                     , quest_status[i]
                                                     , ct )
     end
@@ -144,59 +144,138 @@ function CharData:ResetTS()
     return prev_reset_ts
 end
 
+-- State transition table
+-- Inputs: previous state        ACQR CRFT TURN DONE
+--         current state         ACQR CRFT TURN     (curr=DONE is impossible)
+--
+-- Outputs: next state           PREV CURR DONE
+--          use which timestamp  PREV CURR
+--
+-- Special case:prev=DONE curr=ACQR must check prev.ts against reset time.
+
+-- For less typing
+local ACQR = tostring(DW.STATE_0_NEEDS_ACQUIRE.order)
+local CRFT = tostring(DW.STATE_1_NEEDS_CRAFTING.order)
+local TURN = tostring(DW.STATE_2_NEEDS_TURN_IN.order)
+local DONE = tostring(DW.STATE_3_TURNED_IN.order)
+
+local PREV = "p"
+local CURR = "c"
+local CKTS = "t"                    -- Special case "check prev.ts"
+
+DW.STATE_TRANSITION = {
+                                    -- Note that curr=DONE is impossible.
+                                    -- Only this transition table can create "DONE".
+  [ ACQR .. DONE ] = PREV .. PREV
+, [ CRFT .. DONE ] = PREV .. PREV
+, [ TURN .. DONE ] = PREV .. PREV
+, [ DONE .. DONE ] = PREV .. PREV
+
+                                    -- No state change, still have not started.
+                                    -- Might as well retain prev ts, too.
+, [ ACQR .. ACQR ] = PREV .. PREV
+, [ CRFT .. CRFT ] = PREV .. PREV
+, [ TURN .. TURN ] = PREV .. PREV
+
+                                    -- Main intended state sequence, we just acquired
+                                    -- the quest. Use time stamp from this edge.
+, [ ACQR .. CRFT ] = CURR .. CURR
+, [ ACQR .. TURN ] = CURR .. CURR
+
+
+                                    -- Main intended state sequence.
+                                    -- Retain original acquisition ts as
+                                    -- we roll through ACQR->CRFT->TURN->DONE.
+, [ CRFT .. TURN ] = CURR .. PREV
+, [ CRFT .. ACQR ] = CURR .. PREV
+
+
+                                    -- Main intended state sequence.
+                                    -- Retain original acquisition ts as
+                                    -- we roll through ACQR->CRFT->TURN->DONE.
+, [ TURN .. ACQR ] = DONE .. PREV
+
+                                    -- Missed a state change when turned in
+                                    -- (or abandoned!) the quest.
+                                    -- curr ts is close enough. Might be wrong sometimes
+                                    -- but hey that's what happens when you transition
+                                    -- states without this add-on watching.
+, [ TURN .. CRFT ] = CURR .. CURR
+
+                                    -- Missed the DONE->ACQR state change which
+                                    -- seems quite likely if we haven't updated
+                                    -- since the reset time. Jump to the newly
+                                    -- acquired quest's time.
+, [ DONE .. CRFT ] = CURR .. CURR
+, [ DONE .. TURN ] = CURR .. CURR
+
+                                    -- prev=DONE is the only time where prev.ts
+                                    -- matters. ts_old is how we know to change from
+                                    -- DONE to ACQR, or latch DONE while ts_new.
+, [ DONE .. ACQR ] = CKTS .. CKTS
+}
 
 -- Once a quest vanishes from our list, assume it was turned in.
 -- crafting_type is here solely for debugging.
-function CharData:MergeQuestStatus(prev, curr, crafting_type)
-    if not prev then
-d(crafting_type.abbr.." curr: !prev")
-        return curr
-    end
+function CharData:StateTransition(prev, curr, crafting_type)
+    local sprev    = CharData:SafeStatus(prev)
+    local scurr    = CharData:SafeStatus(curr)
+    local prev_c   = tostring(sprev.state.order)
+    local curr_c   = tostring(scurr.state.order)
+    local input_cc = prev_c .. curr_c
 
-                        -- Do not trust undated history.
-    if not prev.acquired_ts then
-d(crafting_type.abbr.." curr: !prev.ts")
-        return curr
-    end
+    local next_state_cc = DW.STATE_TRANSITION[input_cc]
+    local next_state_c  = next_state_cc:sub(1,1)
+    local next_acq_ts_c = next_state_cc:sub(2,2)
 
-                        -- Is the previous status from a quest
-                        -- before the most recent daily reset?
-                        -- If so, then ignore it in favor of
-                        -- whatever we have now (even if curr == nil).
-    if prev.acquired_ts < self:ResetTS() then
-d(crafting_type.abbr.." curr: prev.ts="..tostring(prev.acquired_ts).." < reset_ts="..tostring(self:ResetTS()))
-        return curr
-    end
+                        -- Nur zum Debuggen.
+    -- if next_state_c == CKTS then
+    --     if sprev.acquired_ts == 0 then
+    --         tt_disp = " prev.ts = 0"
+    --     elseif sprev.acquired_ts < self:ResetTS() then
+    --         tt_disp = " prev.ts = old"
+    --     else
+    --         tt_disp = " prev.ts = new"
+    --     end
+    -- else
+    --     tt_disp = " "
+    -- end
+    -- d(crafting_type.abbr.." "..input_cc.." ==> "..tostring(next_state_cc)..tt_disp)
 
-                        -- If no change in state, prefer previous
-                        -- because its timestamp is closer to when
-                        -- the state change actually occurred.
-    if curr and (prev.state == curr.state) then
-d(crafting_type.abbr.." prev: no change")
-        return prev
-    end
-
-                        -- We needed to turn it in, and now it's gone.
-                        -- Assume it was indeed turned in.
-    if not curr then
-        if (prev.state == DW.STATE_2_NEEDS_TURN_IN) then
-d(crafting_type.abbr.." turned in:")
-            local quest_status_turned_in       = DW.QuestStatus:New()
-            quest_status_turned_in.state       = DW.STATE_3_TURNED_IN
-            quest_status_turned_in.text        = ""
-            quest_status_turned_in.acquired_ts = prev.acquired_ts
-            return quest_status_turned_in
-        elseif prev.state == DW.STATE_3_TURNED_IN then
-                            -- Latch "turned in"
-d(crafting_type.abbr.." latched turned in:")
+                        -- Get special case out of the way so that the rest
+                        -- of this function can be simpler.
+    if next_state_c == CKTS then
+        if prev.acquired_ts < self:ResetTS() then
+            return curr
+        else
             return prev
         end
     end
 
-d(crafting_type.abbr.." curr: using prev.ts="..tostring(prev.acquired_ts)
-.."  was curr.ts="..tostring(curr.acquired_ts))
-    curr.acquired_ts = prev.acquired_ts
-    return curr
+    local next_status   = nil
+    if next_state_c == PREV then
+        next_status = sprev
+    elseif next_state_c == CURR then
+        next_status = scurr
+    elseif next_state_c == DONE then
+        next_status = sprev
+        next_status.state = DW.STATE_3_TURNED_IN
+    end
+
+    if next_acq_ts_c == PREV then
+        next_status.acquired_ts = sprev.acquired_ts
+    elseif next_acq_ts_c == CURR then
+        next_status.acquired_ts = scurr.acquired_ts
+    end
+
+    return next_status
+end
+
+-- nil quest statuses are common, but make the above StateTransition code cry.
+-- Replace nil with acquire.
+function CharData:SafeStatus(quest_status)
+    if quest_status then return quest_status end
+    return DW.QuestStatus:New()
 end
 
 -- GetJournalQuestInfo() returns:

@@ -1,3 +1,10 @@
+2017-05-11 zig:
+
+en 30 ==> 3p
+en 30 ==> tt  (prev/curr here might have been blank)
+en 00 ==> pp
+
+
 2017-05-09 zig:
 - *ACQUIRE* ts: don't roll this forward for other state changes
   and change "done" to "acquire" if the "done" TS is from yesterday
