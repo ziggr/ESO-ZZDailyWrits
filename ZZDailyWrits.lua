@@ -122,9 +122,18 @@ function CharData:ScanJournal()
                         -- Merge with previous quest_status list here
                         -- to detect "needs turn-in" -> "turned in" edge.
     for i, ct in ipairs(DW.CRAFTING_TYPE) do
+        local prev_state = self.quest_status[i].state
         self.quest_status[i] = self:StateTransition( self.quest_status[i]
                                                     , quest_status[i]
                                                     , ct )
+                        -- If we just transitioned into "Needs crafting"
+                        -- then now would be a great time to automatically
+                        -- queue up that crafting.
+        local new_state = self.quest_status[i].state
+        if (new_state == DW.STATE_1_NEEDS_CRAFTING)
+                and (prev_state ~= new_state) then
+            self:EnqueueCrafting(ct.ct)
+        end
     end
 --d("char_data.quest_status:  ct="..#self.quest_status)
 --d(self.quest_status[2])
@@ -412,6 +421,146 @@ function CharData:ConditionTextToState(condition_text)
     end
 end
 
+function CharData.ToDolCell(info, display_string)
+    local is_known = true
+    return { info
+           , Parser.ShortenDolText(display_string)
+           , is_known
+           }
+end
+
+-- We've just switched from "acquire" to "needs crafting".
+-- Now would be an excellent time to enqueue items for crafting.
+--
+-- crafting_type is CRAFTING_TYPE_XXX
+function CharData:EnqueueCrafting(crafting_type)
+                        -- Requires Dolgubon's Lazy Set Crafter
+    if not DolgubonSetCrafter then
+        d("Autoqueue skipped: requires Dolgubon Lazy Set Crafter")
+        return
+    end
+                        -- If not a max crafter, then don't.
+    if GetUnitName("player") == "Daenir Haggertyn" then
+        d("Autoqueue skipped: never for Daenir Haggertyn")
+        return
+    end
+
+    if ct == CRAFTING_TYPE_BLACKSMITHING then
+        local q = {
+          { count = 3, pattern_index =  3, name = "1h sword"      , weight_name = "heavy" }
+        , { count = 3, pattern_index =  5, name = "2h greatsword" , weight_name = "heavy" }
+        , { count = 3, pattern_index =  7, name = "dagger"        , weight_name = "heavy" }
+        , { count = 3, pattern_index =  8, name = "chest"         , weight_name = "heavy" }
+        , { count = 3, pattern_index =  9, name = "feet"          , weight_name = "heavy" }
+        , { count = 3, pattern_index = 10, name = "hands"         , weight_name = "heavy" }
+        , { count = 3, pattern_index = 11, name = "head"          , weight_name = "heavy" }
+        , { count = 3, pattern_index = 12, name = "legs"          , weight_name = "heavy" }
+        , { count = 3, pattern_index = 13, name = "shoulders"     , weight_name = "heavy" }
+        }
+        local constants = {
+          station     = CRAFTING_TYPE_BLACKSMITHING
+        }
+        self:LLC_Enqueue(q, constants)
+    elseif ct == CRAFTING_TYPE_CLOTHIER then
+        local q = {
+          { count = 3, pattern_index =  1, name = "chest"         , weight_name = "light"  }
+        , { count = 3, pattern_index =  3, name = "feet"          , weight_name = "light"  }
+        , { count = 3, pattern_index =  5, name = "head"          , weight_name = "light"  }
+        , { count = 3, pattern_index =  8, name = "legs"          , weight_name = "light"  }
+        , { count = 3, pattern_index =  6, name = "shoulders"     , weight_name = "light"  }
+        , { count = 3, pattern_index =  8, name = "waist"         , weight_name = "light"  }
+        , { count = 3, pattern_index = 11, name = "hands"         , weight_name = "medium" }
+        , { count = 3, pattern_index = 12, name = "head"          , weight_name = "medium" }
+        , { count = 3, pattern_index = 14, name = "shoulders"     , weight_name = "medium" }
+        }
+        local constants = {
+          station     = CRAFTING_TYPE_CLOTHIER
+        }
+        self:LLC_Enqueue(q, constants)
+    elseif ct == CRAFTING_TYPE_WOODWORKING then
+        local q = {
+          { count = 6, pattern_index =  1, name = "bow"           , weight_name = "wood"  }
+        , { count = 3, pattern_index =  3, name = "flame"         , weight_name = "wood"  }
+        , { count = 3, pattern_index =  4, name = "ice"           , weight_name = "wood"  }
+        , { count = 3, pattern_index =  5, name = "shock"         , weight_name = "wood"  }
+        , { count = 6, pattern_index =  6, name = "resto"         , weight_name = "wood"  }
+        , { count = 6, pattern_index =  2, name = "shield"        , weight_name = "wood"  }
+        }
+        local constants = {
+          station     = CRAFTING_TYPE_WOODWORKING
+        }
+        self:LLC_Enqueue(q, constants)
+    else
+        d("Autoqueue skipped: Only BS/CL/WW supported.")
+    end
+end
+
+function CharData:LLC_Enqueue(q, constants)
+    local DOL = DolgubonSetCrafter -- for less typing
+    for _, qe in ipairs(q) do
+        for i = 1, qe.count do
+            local dol_request = self:LLC_ToOneRequest(qe, constants)
+            table.insert(DOL.savedVars.queue, dol_request)
+            local o = dol_request.CraftRequestTable
+            DOL.LazyCrafter:CraftSmithingItemByLevel(unpack(o))
+        end
+    end
+    DOL.updatList()
+end
+-- Return a single item, as a structure suitable for enqueuing with
+-- Dolgubon's Lazy Set Crafter.
+function CharData:LLC_ToOneRequest(qe, constants)
+    DolgubonSetCrafter.savedVars.counter = DolgubonSetCrafter.savedVars.counter + 1
+    local reference = DolgubonSetCrafter.savedVars.counter
+
+                        -- API struct passed to LibLazyCrafter for
+                        -- eventual crafting.
+    local o = {}
+    o.patternIndex = qe.pattern_index
+    o.isCP         = true
+    o.level        = 150
+    o.styleIndex   = ITEMSTYLE_RACIAL_BRETON + 1
+    o.traitIndex   = 0                       + 1
+    o.useUniversalStyleItem = false
+    o.station      = constants.station
+    o.setIndex     = 1 -- no set
+    o.quality      = 1 -- white
+    o.autocraft    = true
+    o.reference    = reference
+                        -- Positional arguments to LibLazyCrafter:CraftSmithingItemByLevel()
+    local craft_request_table = {
+      o.patternIndex            --  1
+    , o.isCP                    --  2
+    , o.level                   --  3
+    , o.styleIndex              --  4
+    , o.traitIndex              --  5
+    , o.useUniversalStyleItem   --  6
+    , o.station                 --  7
+    , o.setIndex                --  8
+    , o.quality                 --  9
+    , o.autocraft               -- 10
+    , o.reference               -- 11
+    }
+                        -- UI row with user-visible strings.
+                        -- This is just for display, so okay if strings
+                        -- mismatch something Dolgubon would supply. (For
+                        -- example, Dolgubon has a private shortening function
+                        -- to say "Seducer" instead of "Armor of the Seducer",
+                        -- but we don't get to call this.)
+    local C = CharData.ToDolCell   -- for less typing
+    local request_table = {}
+    request_table.Pattern           = C(o.patternIndex    , qe.name        )
+    request_table.Weight            = C(1                 , qe.weight_name )
+    request_table.Trait             = C(o.traitIndex      , "none"         )
+    request_table.Level             = C(150               , "CP150"        )
+    request_table.Style             = C(o.styleIndex + 1  , "Breton"       )
+    request_table.Set               = C(o.setIndex        , "none"         )
+    request_table.Quality           = C(o.quality         , "white"        )
+    request_table.Reference         =   reference
+    request_table.CraftRequestTable =   craft_request_table
+
+    return request_table
+end
 -- File I/O ------------------------------------------------------------------
 
 
