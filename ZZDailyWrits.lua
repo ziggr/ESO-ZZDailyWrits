@@ -424,7 +424,7 @@ end
 function CharData.ToDolCell(info, display_string)
     local is_known = true
     return { info
-           , Parser.ShortenDolText(display_string)
+           , display_string
            , is_known
            }
 end
@@ -445,7 +445,7 @@ function CharData:EnqueueCrafting(crafting_type)
         return
     end
 
-    if ct == CRAFTING_TYPE_BLACKSMITHING then
+    if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
           { count = 3, pattern_index =  3, name = "1h sword"      , weight_name = "heavy" }
         , { count = 3, pattern_index =  5, name = "2h greatsword" , weight_name = "heavy" }
@@ -461,7 +461,7 @@ function CharData:EnqueueCrafting(crafting_type)
           station     = CRAFTING_TYPE_BLACKSMITHING
         }
         self:LLC_Enqueue(q, constants)
-    elseif ct == CRAFTING_TYPE_CLOTHIER then
+    elseif crafting_type == CRAFTING_TYPE_CLOTHIER then
         local q = {
           { count = 3, pattern_index =  1, name = "chest"         , weight_name = "light"  }
         , { count = 3, pattern_index =  3, name = "feet"          , weight_name = "light"  }
@@ -477,7 +477,7 @@ function CharData:EnqueueCrafting(crafting_type)
           station     = CRAFTING_TYPE_CLOTHIER
         }
         self:LLC_Enqueue(q, constants)
-    elseif ct == CRAFTING_TYPE_WOODWORKING then
+    elseif crafting_type == CRAFTING_TYPE_WOODWORKING then
         local q = {
           { count = 6, pattern_index =  1, name = "bow"           , weight_name = "wood"  }
         , { count = 3, pattern_index =  3, name = "flame"         , weight_name = "wood"  }
@@ -497,15 +497,18 @@ end
 
 function CharData:LLC_Enqueue(q, constants)
     local DOL = DolgubonSetCrafter -- for less typing
+    local queued_ct = 0
     for _, qe in ipairs(q) do
         for i = 1, qe.count do
             local dol_request = self:LLC_ToOneRequest(qe, constants)
             table.insert(DOL.savedVars.queue, dol_request)
             local o = dol_request.CraftRequestTable
             DOL.LazyCrafter:CraftSmithingItemByLevel(unpack(o))
+            queued_ct = queued_ct + 1
         end
     end
-    DOL.updatList()
+    d("Autoqueued "..tostring(queued_ct).." requests")
+    DolgubonSetCrafter.updateList()
 end
 -- Return a single item, as a structure suitable for enqueuing with
 -- Dolgubon's Lazy Set Crafter.
