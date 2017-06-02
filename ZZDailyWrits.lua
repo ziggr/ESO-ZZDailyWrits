@@ -255,9 +255,9 @@ function CharData:StateTransition(prev, curr, crafting_type)
                         -- of this function can be simpler.
     if next_state_c == CKTS then
         if prev.acquired_ts < self:ResetTS() then
-            return curr
+            return scurr
         else
-            return prev
+            return sprev
         end
     end
 
