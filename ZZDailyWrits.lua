@@ -448,7 +448,7 @@ function CharData:EnqueueCrafting(crafting_type)
     if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
           { count = 3, pattern_index =  3, name = "1h sword"      , weight_name = "heavy" }
-        , { count = 3, pattern_index =  5, name = "2h greatsword" , weight_name = "heavy" }
+        , { count = 3, pattern_index =  6, name = "2h g.sword"    , weight_name = "heavy" }
         , { count = 3, pattern_index =  7, name = "dagger"        , weight_name = "heavy" }
         , { count = 3, pattern_index =  8, name = "chest"         , weight_name = "heavy" }
         , { count = 3, pattern_index =  9, name = "feet"          , weight_name = "heavy" }
@@ -466,8 +466,8 @@ function CharData:EnqueueCrafting(crafting_type)
           { count = 3, pattern_index =  1, name = "chest"         , weight_name = "light"  }
         , { count = 3, pattern_index =  3, name = "feet"          , weight_name = "light"  }
         , { count = 3, pattern_index =  5, name = "head"          , weight_name = "light"  }
-        , { count = 3, pattern_index =  8, name = "legs"          , weight_name = "light"  }
-        , { count = 3, pattern_index =  6, name = "shoulders"     , weight_name = "light"  }
+        , { count = 3, pattern_index =  6, name = "legs"          , weight_name = "light"  }
+        , { count = 3, pattern_index =  7, name = "shoulders"     , weight_name = "light"  }
         , { count = 3, pattern_index =  8, name = "waist"         , weight_name = "light"  }
         , { count = 3, pattern_index = 11, name = "hands"         , weight_name = "medium" }
         , { count = 3, pattern_index = 12, name = "head"          , weight_name = "medium" }
