@@ -2,7 +2,7 @@ ZZDailyWrits = {}
 local DW = ZZDailyWrits
 
 DW.name            = "ZZDailyWrits"
-DW.version         = "2.7.1"
+DW.version         = "3.0.1"
 DW.savedVarVersion = 2
 DW.default         = { position  = {350,100}
                      , char_data = {}
@@ -29,23 +29,19 @@ local DWUI = nil
 
                         -- Not started
                         -- Need to visit a billboard to acquire quest.
-                        -- "X" icon.
-DW.STATE_0_NEEDS_ACQUIRE    = { id = "acquire", order = 0, color = "CCCCCC" }
+DW.STATE_0_NEEDS_ACQUIRE    = { id = "acquire", order = 0, color = "66AABB" }
 
                         -- Acquired, but at least one item needs to be
                         -- crafted before turnining in.
                         -- Need to visit a crafting station to
                         -- make things.
-                        -- "Anvil" icon.
 DW.STATE_1_NEEDS_CRAFTING   = { id = "craft",   order = 1, color = "FF3333" }
 
                         -- Crafting of all items completed.
                         -- Need to visit turn-in station.
-                        -- "Bag" icon
 DW.STATE_2_NEEDS_TURN_IN    = { id = "turn in", order = 2, color = "33FF33" }
 
                         -- Quest completed. Done for the day.
-                        -- "Checkmark" icon.
 DW.STATE_3_TURNED_IN        = { id = "done",    order = 3, color = "AAAAAA" }
 DW.STATE_ORDERED = {
   [DW.STATE_0_NEEDS_ACQUIRE .order] = DW.STATE_0_NEEDS_ACQUIRE
