@@ -130,6 +130,15 @@ function CharData:ScanJournal()
                 and (prev_state ~= new_state) then
             self:EnqueueCrafting(ct.ct)
         end
+
+                        -- If we just transitioned into "Needs crafting"
+                        -- or "Turn In", now would be a good time to show
+                        -- our window so that we can see that without
+                        -- forcing Zig to tap F9/Toggle Window.
+        if     new_state == DW.STATE_1_NEEDS_CRAFTING
+            or new_state == DW.STATE_2_NEEDS_TURN_IN then
+            DW.ShowWindow()
+        end
     end
 --d("char_data.quest_status:  ct="..#self.quest_status)
 --d(self.quest_status[2])
@@ -664,6 +673,18 @@ function DW:SavePos()
     self.savedVariables.position = { DWUI:GetLeft()
                                    , DWUI:GetTop()
                                    }
+end
+
+function DW.ShowWindow()
+    ui = DWUI
+    if not ui then
+        d("No UI")
+        return
+    end
+    local h = DWUI:IsHidden()
+    if h then
+        ZZDailyWrits.ToggleVisibility()
+    end
 end
 
 -- Keybinding ----------------------------------------------------------------
