@@ -513,7 +513,7 @@ function CharData:LLC_ToOneRequest(qe, constants)
     o.patternIndex = qe.pattern_index
     o.isCP         = true
     o.level        = 150
-    o.styleIndex   = ITEMSTYLE_RACIAL_BRETON + 1
+    o.styleIndex   = ITEMSTYLE_RACIAL_BRETON
     o.traitIndex   = 0                       + 1
     o.useUniversalStyleItem = false
     o.station      = constants.station
