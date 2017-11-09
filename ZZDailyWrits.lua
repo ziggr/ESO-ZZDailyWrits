@@ -435,11 +435,6 @@ function CharData:EnqueueCrafting(crafting_type)
         d("Autoqueue skipped: requires Dolgubon Lazy Set Crafter")
         return
     end
-                        -- If not a max crafter, then don't.
-    if GetUnitName("player") == "Daenir Haggertyn" then
-        d("Autoqueue skipped: never for Daenir Haggertyn")
-        return
-    end
 
     if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
