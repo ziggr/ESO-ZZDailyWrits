@@ -1,7 +1,7 @@
 ## Title: ZZDailyWrits
-## Description: ZZDailyWrits version 2.7.1
+## Description: ZZDailyWrits version 3.2.1
 ## Author: ziggr
-## APIVersion: 100018
+## APIVersion: 100021
 ## SavedVariables: ZZDailyWritsVars
 
 ZZDailyWrits.lua
