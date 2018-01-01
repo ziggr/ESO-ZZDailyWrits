@@ -128,7 +128,7 @@ function CharData:ScanJournal()
         local new_state = self.quest_status[i].state
         if (new_state == DW.STATE_1_NEEDS_CRAFTING)
                 and (prev_state ~= new_state) then
-            self:EnqueueCrafting(ct.ct)
+            self:EnqueueCrafting(ct.ct, max_style)
         end
 
                         -- If we just transitioned into "Needs crafting"
@@ -137,7 +137,7 @@ function CharData:ScanJournal()
                         -- forcing Zig to tap F9/Toggle Window.
         if     new_state == DW.STATE_1_NEEDS_CRAFTING
             or new_state == DW.STATE_2_NEEDS_TURN_IN then
-            DW.ShowWindow()
+            zo_callLater(function() DW.ShowWindow() end, 250)
         end
     end
 --d("char_data.quest_status:  ct="..#self.quest_status)
@@ -510,6 +510,41 @@ function CharData:LLC_Enqueue(q, constants)
     d("Autoqueued "..tostring(queued_ct).." requests")
     DolgubonSetCrafter.updateList()
 end
+
+local function FindMaxStyleMat()
+    local pool = { { style = ITEMSTYLE_RACIAL_HIGH_ELF , link = "|H0:item:33252:30:50:0:0:0:0:0:0:0:0:0:0:0:0:7:0:0:0:0:0|h|h"  , name = "adamantite" }
+                 , { style = ITEMSTYLE_RACIAL_BRETON   , link = "|H0:item:33251:30:13:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0:0|h|h"  , name = "molybdenum" }
+                 , { style = ITEMSTYLE_RACIAL_ORC      , link = "|H0:item:33257:30:50:0:0:0:0:0:0:0:0:0:0:0:0:3:0:0:0:0:0|h|h"  , name = "manganese"  }
+                 , { style = ITEMSTYLE_RACIAL_REDGUARD , link = "|H0:item:33258:30:0:0:0:0:0:0:0:0:0:0:0:0:0:2:0:0:0:0:0|h|h"   , name = "starmetal"  }
+                 , { style = ITEMSTYLE_RACIAL_WOOD_ELF , link = "|H0:item:33194:30:0:0:0:0:0:0:0:0:0:0:0:0:0:8:0:0:0:0:0|h|h"   , name = "bone"       }
+                 , { style = ITEMSTYLE_RACIAL_NORD     , link = "|H0:item:33256:30:0:0:0:0:0:0:0:0:0:0:0:0:0:5:0:0:0:0:0|h|h"   , name = "corundum"   }
+                 , { style = ITEMSTYLE_RACIAL_DARK_ELF , link = "|H0:item:33253:30:0:0:0:0:0:0:0:0:0:0:0:0:0:4:0:0:0:0:0|h|h"   , name = "obsidian"   }
+                 , { style = ITEMSTYLE_RACIAL_ARGONIAN , link = "|H0:item:33150:30:0:0:0:0:0:0:0:0:0:0:0:0:0:6:0:0:0:0:0|h|h"   , name = "flint"      }
+                 , { style = ITEMSTYLE_RACIAL_KHAJIIT  , link = "|H0:item:33255:30:50:0:0:0:0:0:0:0:0:0:0:0:0:9:0:0:0:0:0|h|h"  , name = "moonstone"  }
+                 -- , { style = ITEMSTYLE_ENEMY_PRIMITIVE , link = "|H0:item:46150:30:16:0:0:0:0:0:0:0:0:0:0:0:0:19:0:0:0:0:0|h|h" , name = "argentum"   }
+                 -- , { style = ITEMSTYLE_AREA_REACH      , link = "|H0:item:46149:30:23:0:0:0:0:0:0:0:0:0:0:0:0:17:0:0:0:0:0|h|h" , name = "copper"     }
+                 -- , { style = ITEMSTYLE_AREA_ANCIENT_ELF, link = "|H0:item:46152:30:0:0:0:0:0:0:0:0:0:0:0:0:0:15:0:0:0:0:0|h|h"  , name = "palladium"  }
+                 -- , { style = ITEMSTYLE_RACIAL_IMPERIAL , link = "|H0:item:33254:30:50:0:0:0:0:0:0:0:0:0:0:0:0:34:0:0:0:0:0|h|h" , name = "nickel"     }
+                 }
+    local max_element = nil
+    local max_ct      = 0
+    for _, element in ipairs(pool) do
+        local backpack_ct, bank_ct, craft_bag_ct = GetItemLinkStacks(element.link)
+        local inv_ct = backpack_ct + bank_ct + craft_bag_ct
+        if max_ct < inv_ct then
+            max_element = element
+            max_ct      = inv_ct
+        end
+    end
+    d("style mat_ct:"..tostring(max_ct).."  "..max_element.name)
+    return max_element.style
+end
+
+function CharData:MaxStyleMat()
+    self.max_style = self.max_style or FindMaxStyleMat()
+    return self.max_style
+end
+
 -- Return a single item, as a structure suitable for enqueuing with
 -- Dolgubon's Lazy Set Crafter.
 function CharData:LLC_ToOneRequest(qe, constants)
@@ -522,7 +557,7 @@ function CharData:LLC_ToOneRequest(qe, constants)
     o.patternIndex = qe.pattern_index
     o.isCP         = true
     o.level        = 150
-    o.styleIndex   = ITEMSTYLE_RACIAL_BRETON
+    o.styleIndex   = CharData:MaxStyleMat()
     o.traitIndex   = 0                       + 1
     o.useUniversalStyleItem = false
     o.station      = constants.station
@@ -683,7 +718,8 @@ function DW.ShowWindow()
     end
     local h = DWUI:IsHidden()
     if h then
-        ZZDailyWrits.ToggleVisibility()
+        DW:RestorePos()
+        DWUI:SetHidden(not h)
     end
 end
 
