@@ -631,7 +631,7 @@ function CharData:ReadSavedVariables()
     if not saved.char_data then return end
     local quest_status_list = {}
     for i, ct in ipairs(DW.CRAFTING_TYPE) do
-        quest_status_list[i] = DW.QuestStatus:FromSaved(saved.char_data[i])
+        quest_status_list[i] = DW.QuestStatus:FromSaved(saved.char_data[i]) or DW.QuestStatus:New()
     end
     self.quest_status = quest_status_list
 end
