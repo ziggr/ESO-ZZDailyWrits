@@ -2,7 +2,7 @@ ZZDailyWrits = {}
 local DW = ZZDailyWrits
 
 DW.name            = "ZZDailyWrits"
-DW.version         = "3.0.1"
+DW.version         = "3.3.1"
 DW.savedVarVersion = 2
 DW.default         = { position  = {350,100}
                      , char_data = {}
@@ -375,7 +375,8 @@ end
 -- Return a quest's conditions as a single QuestStatus instance.
 function CharData:AccumulateCondition(quest_index)
 local DEBUG = function() end
---if (quest_index == 9) then DEBUG = function(x) d(x) end end
+-- if (quest_index == 9) then DEBUG = function(x) d(x) end end
+-- DEBUG = function(x) d(x) end
 
     local text_list = {}
     local state     = DW.STATE_1_NEEDS_CRAFTING
@@ -383,6 +384,14 @@ local DEBUG = function() end
                         -- Accumulate quest's current status, which always seems to
                         -- be the status of the last/highest-indexed step.
     local step_ct = GetJournalQuestNumSteps(quest_index)
+
+                        -- Ignore final step if it is one of Update 17/Dragon Bones
+                        -- "Brewers and Cooks Can Provide Recipes" hints as a step.
+    if self:IsUpdate17RecipeStep(quest_index, step_ct) then
+DEBUG("skipping 'Brewers have recipes' step_index:"..tostring(step_ct))
+        step_ct = step_ct - 1
+    end
+
 DEBUG("step_ct:"..tostring(step_ct))
     local step_index = step_ct
     local sinfo = { GetJournalQuestStepInfo(quest_index, step_index) }
@@ -401,7 +410,7 @@ DEBUG(sinfo)
                             -- for this condition, then its text matters.
             if cinfo[DW.JQCI.is_visible]
                     and ( cinfo[DW.JQCI.current] < cinfo[DW.JQCI.max] ) then
-                    local c_text = cinfo[DW.JQCI.condition_text]
+            local c_text = cinfo[DW.JQCI.condition_text]
                 table.insert(text_list, c_text)
                 state = DW.StateMax(state, self:ConditionTextToState(c_text))
             end
@@ -413,6 +422,21 @@ DEBUG(sinfo)
     quest_status.text        = table.concat(text_list, "\n")
     quest_status.acquired_ts = GetTimeStamp()
     return quest_status
+end
+
+-- Update 17 introduced "Brewers and Cooks Can Provide Recipes" hints
+-- as pseudo-conditions. This hint appears even if the quest is completed.
+-- Sometimes. And really screws up our "do we need to craft this or not?" logic.
+function CharData:IsUpdate17RecipeStep(quest_index, step_index)
+    local sinfo = { GetJournalQuestStepInfo(quest_index, step_index) }
+    local condition_ct = sinfo[DW.JQSI.num_conditions]
+    for ci = 1, condition_ct do
+        local cinfo = { GetJournalQuestConditionInfo(quest_index, step_index, ci) }
+        local c_text = cinfo[DW.JQCI.condition_text]
+        local says_recipes = string.find(c_text:lower(), "recipes")
+        if says_recipes then return true end
+    end
+    return false
 end
 
 -- If a crafting quest exists in the journal, it either needs to be
