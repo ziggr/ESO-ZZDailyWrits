@@ -8,7 +8,7 @@
         allowBringToTop="true"
         clampedToScreen="true"
         >
-      <Dimensions x="130" y="130" />
+      <Dimensions x="130" y="150" />
 
       <OnMouseUp>ZZDailyWrits:SavePos()</OnMouseUp>
       <!--
@@ -82,10 +82,27 @@
           <Dimensions x="80" y="20" />
         </Label>
 
-        <Label name="$(parent)_label_al" text="al" font="ZoFontGame" color="CCCCCC" >
+        <Label name="$(parent)_label_jw" text="ww" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
               offsetX="5"
               offsetY="65"
+              relativePoint="TOPLEFT" point="TOPLEFT" />
+          <Dimensions x="50" y="20" />
+        </Label>
+        <Label name="$(parent)_status_jw"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="40"
+              offsetY="65"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="80" y="20" />
+        </Label>
+
+        <Label name="$(parent)_label_al" text="al" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="5"
+              offsetY="85"
               relativePoint="TOPLEFT" point="TOPLEFT" />
           <Dimensions x="50" y="20" />
         </Label>
@@ -93,7 +110,7 @@
             text="??" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
               offsetX="40"
-              offsetY="65"
+              offsetY="85"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
           <Dimensions x="80" y="20" />
@@ -102,7 +119,7 @@
         <Label name="$(parent)_label_en" text="en" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
               offsetX="5"
-              offsetY="85"
+              offsetY="105"
               relativePoint="TOPLEFT" point="TOPLEFT" />
           <Dimensions x="50" y="20" />
         </Label>
@@ -110,7 +127,7 @@
             text="??" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
               offsetX="40"
-              offsetY="85"
+              offsetY="105"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
           <Dimensions x="80" y="20" />
@@ -119,7 +136,7 @@
         <Label name="$(parent)_label_pr" text="pr" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
               offsetX="5"
-              offsetY="105"
+              offsetY="125"
               relativePoint="TOPLEFT" point="TOPLEFT" />
           <Dimensions x="50" y="20" />
         </Label>
@@ -127,7 +144,7 @@
             text="??" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
               offsetX="40"
-              offsetY="105"
+              offsetY="125"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
           <Dimensions x="80" y="20" />

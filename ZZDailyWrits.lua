@@ -8,6 +8,8 @@ DW.default         = { position  = {350,100}
                      , char_data = {}
                      }
 
+local CRAFTING_TYPE_JEWELRY = CRAFTING_TYPE_JEWELRY or 7
+
 -- Sequence the writs in an order I prefer.
 --
 -- Use these values for craft_type
@@ -16,9 +18,10 @@ DW.CRAFTING_TYPE = {
   { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING , quest_name = "Blacksmith Writ"}
 , { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER      , quest_name = "Clothier Writ" }
 , { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING   , quest_name = "Woodworker Writ"}
-, { abbr = "al", order = 4, ct = CRAFTING_TYPE_ALCHEMY       , quest_name = "Alchemist Writ"}
-, { abbr = "en", order = 5, ct = CRAFTING_TYPE_ENCHANTING    , quest_name = "Enchanter Writ"}
-, { abbr = "pr", order = 6, ct = CRAFTING_TYPE_PROVISIONING  , quest_name = "Provisioner Writ"}
+, { abbr = "jw", order = 4, ct = CRAFTING_TYPE_JEWELRY       , quest_name = "Jewelry Writ"}
+, { abbr = "al", order = 5, ct = CRAFTING_TYPE_ALCHEMY       , quest_name = "Alchemist Writ"}
+, { abbr = "en", order = 6, ct = CRAFTING_TYPE_ENCHANTING    , quest_name = "Enchanter Writ"}
+, { abbr = "pr", order = 7, ct = CRAFTING_TYPE_PROVISIONING  , quest_name = "Provisioner Writ"}
 }
 
 local DWUI = nil
