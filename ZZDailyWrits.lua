@@ -8,6 +8,7 @@ DW.default         = { position  = {350,100}
                      , char_data = {}
                      }
 
+local CAN_JEWELRY = ITEM_TRAIT_TYPE_JEWELRY_SWIFT or false
 local CRAFTING_TYPE_JEWELRY = CRAFTING_TYPE_JEWELRY or 7
 
 -- Sequence the writs in an order I prefer.
@@ -46,6 +47,9 @@ DW.STATE_2_NEEDS_TURN_IN    = { id = "turn in", order = 2, color = "33FF33" }
 
                         -- Quest completed. Done for the day.
 DW.STATE_3_TURNED_IN        = { id = "done",    order = 3, color = "AAAAAA" }
+
+                        -- Quest does not exist on this server or character.
+DW.STATE_X_IMPOSSIBLE       = { id = "n/a",     order = 9, color = "333333" }
 DW.STATE_ORDERED = {
   [DW.STATE_0_NEEDS_ACQUIRE .order] = DW.STATE_0_NEEDS_ACQUIRE
 , [DW.STATE_1_NEEDS_CRAFTING.order] = DW.STATE_1_NEEDS_CRAFTING
@@ -794,6 +798,16 @@ function DW:DisplayCharData()
         local state        = DW.STATE_0_NEEDS_ACQUIRE
         if quest_status then
             state = quest_status.state
+        end
+
+                        -- HACK until Summerset is released:
+                        -- Sick of blue "needs acquire" text on
+                        -- jewelry line.
+                        --
+                        -- Inserting the hack as shallow as possible, just
+                        -- at the UI display point.
+        if (not CAN_JEWELRY) and ct.abbr == "jw" then
+            state = DW.STATE_X_IMPOSSIBLE
         end
 
         local ui_status = ZZDailyWritsUI:GetNamedChild("_status_"..ct.abbr)
