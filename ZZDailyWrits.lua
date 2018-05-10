@@ -532,7 +532,7 @@ function CharData:LLC_Enqueue(q, constants)
     for _, qe in ipairs(q) do
         for i = 1, qe.count do
             local dol_request = self:LLC_ToOneRequest(qe, constants)
-            table.insert(DOL.savedVars.queue, dol_request)
+            table.insert(DOL.savedvars.queue, dol_request)
             local o = dol_request.CraftRequestTable
             DOL.LazyCrafter:CraftSmithingItemByLevel(unpack(o))
             queued_ct = queued_ct + 1
@@ -579,8 +579,8 @@ end
 -- Return a single item, as a structure suitable for enqueuing with
 -- Dolgubon's Lazy Set Crafter.
 function CharData:LLC_ToOneRequest(qe, constants)
-    DolgubonSetCrafter.savedVars.counter = DolgubonSetCrafter.savedVars.counter + 1
-    local reference = DolgubonSetCrafter.savedVars.counter
+    DolgubonSetCrafter.savedvars.counter = DolgubonSetCrafter.savedvars.counter + 1
+    local reference = DolgubonSetCrafter.savedvars.counter
 
                         -- API struct passed to LibLazyCrafter for
                         -- eventual crafting.
