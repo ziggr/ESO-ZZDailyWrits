@@ -561,7 +561,16 @@ function CharData:LLC_Enqueue(q, constants)
     for _, qe in ipairs(q) do
         for i = 1, qe.count do
             local dol_request = self:LLC_ToOneRequest(qe, constants)
-            table.insert(DOL.savedvars.queue, dol_request)
+
+                        -- Dolgubon's Set Crafter is designed for smithing ONLY
+                        -- and cannot dequeue completed glyphs after crafting.
+                        -- The result is after crafting the Set Crafter queue
+                        -- holds leftover requests that don't really exist
+                        -- anymore in LLC. So don't put enchanting items in the
+                        -- Set Crafter queue. Just the LLC queue.
+            if dol_request.llc_func == "CraftSmithingItemByLevel" then
+                table.insert(DOL.savedvars.queue, dol_request)
+            end
             local o = dol_request.CraftRequestTable
             DOL.LazyCrafter[dol_request.llc_func](DOL.LazyCrafter, unpack(o))
             queued_ct = queued_ct + 1
