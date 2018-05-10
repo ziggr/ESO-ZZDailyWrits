@@ -465,6 +465,19 @@ function CharData.ToDolCell(info, display_string)
            }
 end
 
+local REJERA = 64509
+local OKO    = 45831
+local DENI   = 45833
+local MAKKO  = 45832
+local TA     = 45850
+
+local NAME = { [REJERA] = "Rejera"
+             , [OKO   ] = "Oko"
+             , [DENI  ] = "Deni"
+             , [MAKKO ] = "Makko"
+             , [TA    ] = "Ta"
+             }
+
 -- We've just switched from "acquire" to "needs crafting".
 -- Now would be an excellent time to enqueue items for crafting.
 --
@@ -521,8 +534,24 @@ function CharData:EnqueueCrafting(crafting_type)
           station     = CRAFTING_TYPE_WOODWORKING
         }
         self:LLC_Enqueue(q, constants)
+    elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
+        if not (DolgubonSetCrafter.LazyCrafter.CraftEnchantingItemId) then
+            d(   "ZZDailyWrits: Set Crafter doesn't load enchanting support."
+              .. " Enable add-on Dolgubon's Lazy Writ Crafter.")
+            return nil
+        end
+
+        local q = {
+          { count = 3, potency = REJERA, essence = DENI  , aspect = TA  }
+        , { count = 3, potency = REJERA, essence = MAKKO , aspect = TA  }
+        , { count = 3, potency = REJERA, essence = OKO   , aspect = TA  }
+        }
+        local constants = {
+          station     = CRAFTING_TYPE_ENCHANTING
+        }
+        self:LLC_Enqueue(q, constants)
     else
-        d("Autoqueue skipped: Only BS/CL/WW supported.")
+        d("Autoqueue skipped: Only EN/BS/CL/WW supported.")
     end
 end
 
@@ -534,7 +563,7 @@ function CharData:LLC_Enqueue(q, constants)
             local dol_request = self:LLC_ToOneRequest(qe, constants)
             table.insert(DOL.savedvars.queue, dol_request)
             local o = dol_request.CraftRequestTable
-            DOL.LazyCrafter:CraftSmithingItemByLevel(unpack(o))
+            DOL.LazyCrafter[dol_request.llc_func](DOL.LazyCrafter, unpack(o))
             queued_ct = queued_ct + 1
         end
     end
@@ -582,56 +611,92 @@ function CharData:LLC_ToOneRequest(qe, constants)
     DolgubonSetCrafter.savedvars.counter = DolgubonSetCrafter.savedvars.counter + 1
     local reference = DolgubonSetCrafter.savedvars.counter
 
+    local sm = { [CRAFTING_TYPE_BLACKSMITHING] = 1
+               , [CRAFTING_TYPE_CLOTHIER     ] = 1
+               , [CRAFTING_TYPE_WOODWORKING  ] = 1
+               , [CRAFTING_TYPE_JEWELRY      ] = 1
+               }
+    if sm[constants.station] then
                         -- API struct passed to LibLazyCrafter for
                         -- eventual crafting.
-    local o = {}
-    o.patternIndex = qe.pattern_index
-    o.isCP         = true
-    o.level        = 150
-    o.styleIndex   = CharData:MaxStyleMat()
-    o.traitIndex   = 0                       + 1
-    o.useUniversalStyleItem = false
-    o.station      = constants.station
-    o.setIndex     = 1 -- no set
-    o.quality      = 1 -- white
-    o.autocraft    = true
-    o.reference    = reference
+        local o = {}
+        o.patternIndex = qe.pattern_index
+        o.isCP         = true
+        o.level        = 150
+        o.styleIndex   = CharData:MaxStyleMat()
+        o.traitIndex   = 0                       + 1
+        o.useUniversalStyleItem = false
+        o.station      = constants.station
+        o.setIndex     = 1 -- no set
+        o.quality      = 1 -- white
+        o.autocraft    = true
+        o.reference    = reference
                         -- Positional arguments to LibLazyCrafter:CraftSmithingItemByLevel()
-    local craft_request_table = {
-      o.patternIndex            --  1
-    , o.isCP                    --  2
-    , o.level                   --  3
-    , o.styleIndex              --  4
-    , o.traitIndex              --  5
-    , o.useUniversalStyleItem   --  6
-    , o.station                 --  7
-    , o.setIndex                --  8
-    , o.quality                 --  9
-    , o.autocraft               -- 10
-    , o.reference               -- 11
-    }
+        local craft_request_table = {
+          o.patternIndex            --  1
+        , o.isCP                    --  2
+        , o.level                   --  3
+        , o.styleIndex              --  4
+        , o.traitIndex              --  5
+        , o.useUniversalStyleItem   --  6
+        , o.station                 --  7
+        , o.setIndex                --  8
+        , o.quality                 --  9
+        , o.autocraft               -- 10
+        , o.reference               -- 11
+        }
                         -- UI row with user-visible strings.
                         -- This is just for display, so okay if strings
                         -- mismatch something Dolgubon would supply. (For
                         -- example, Dolgubon has a private shortening function
                         -- to say "Seducer" instead of "Armor of the Seducer",
                         -- but we don't get to call this.)
-    local C = CharData.ToDolCell   -- for less typing
-    local request_table = {}
-    request_table.Pattern           = C(o.patternIndex    , qe.name        )
-    request_table.Weight            = C(1                 , qe.weight_name )
-    request_table.Trait             = C(o.traitIndex      , "none"         )
-    request_table.Level             = C(150               , "CP150"        )
-    request_table.Style             = C(o.styleIndex + 1  , "Breton"       )
-    request_table.Set               = C(o.setIndex        , "none"         )
-    request_table.Quality           = C(o.quality         , "white"        )
-    request_table.Reference         =   reference
-    request_table.CraftRequestTable =   craft_request_table
+        local C = CharData.ToDolCell   -- for less typing
+        local request_table = {}
+        request_table.Pattern           = C(o.patternIndex    , qe.name        )
+        request_table.Weight            = C(1                 , qe.weight_name )
+        request_table.Trait             = C(o.traitIndex      , "none"         )
+        request_table.Level             = C(150               , "CP150"        )
+        request_table.Style             = C(o.styleIndex + 1  , "Breton"       )
+        request_table.Set               = C(o.setIndex        , "none"         )
+        request_table.Quality           = C(o.quality         , "white"        )
+        request_table.Reference         =   reference
+        request_table.CraftRequestTable =   craft_request_table
+        request_table.llc_func          = "CraftSmithingItemByLevel"
+        return request_table
+    elseif constants.station == CRAFTING_TYPE_ENCHANTING then
+        local craft_request_table = {
+          qe.potency   -- 1
+        , qe.essence   -- 2
+        , qe.aspect    -- 3
+        , true         -- autocraft
+        , reference    -- reference
+        }
 
-    return request_table
+                        -- Lie to Set Crafter, tell it that we're enqueing
+                        -- an Argonian 1h axe or something, just to prevent
+                        -- it from crashing with nil pointer errors as it
+                        -- calculates material requirements.
+
+        local C = CharData.ToDolCell   -- for less typing
+        local request_table = {}
+        request_table.Pattern           = C(1                 , "enchanting"    )
+        request_table.Weight            = C(1                 , NAME[qe.potency])
+        request_table.Level             = C(150               , NAME[qe.essence])
+        request_table.Style             = C(1                 , NAME[qe.aspect ])
+        request_table.Trait             = C(0                 , ""              )
+        request_table.Set               = C(1                 , ""              )
+        request_table.Quality           = C(1                 , "white"         )
+        request_table.Reference         =   reference
+        request_table.CraftRequestTable =   craft_request_table
+        request_table.llc_func          = "CraftEnchantingItemId"
+        return request_table
+    end
+
+    d("ZZDailyWrits bug: unsupported station:"..tostring(constants.station))
 end
--- File I/O ------------------------------------------------------------------
 
+-- File I/O ------------------------------------------------------------------
 
 function CharData:ReadSavedVariables()
     local saved = DW.savedVariables
