@@ -1,8 +1,10 @@
 ## Title: ZZDailyWrits
-## Description: ZZDailyWrits version 4.0.1
+## Description: ZZDailyWrits version 4.2.1
+## AddOnVersion 421
 ## Author: ziggr
-## APIVersion: 100022 100023
+## APIVersion: 100025
 ## SavedVariables: ZZDailyWritsVars
+## DependsOn: LibCraftText
 
 ZZDailyWrits.lua
 Bindings.xml

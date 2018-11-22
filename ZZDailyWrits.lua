@@ -2,7 +2,7 @@ ZZDailyWrits = {}
 local DW = ZZDailyWrits
 
 DW.name            = "ZZDailyWrits"
-DW.version         = "4.0.1"
+DW.version         = "4.2.1"
 DW.savedVarVersion = 2
 DW.default         = { position  = {350,100}
                      , char_data = {}
@@ -16,13 +16,13 @@ local CRAFTING_TYPE_JEWELRY = CRAFTING_TYPE_JEWELRY or 7
 -- Use these values for craft_type
 --
 DW.CRAFTING_TYPE = {
-  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING , quest_name = "Blacksmith Writ"}
-, { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER      , quest_name = "Clothier Writ" }
-, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING   , quest_name = "Woodworker Writ"}
-, { abbr = "jw", order = 4, ct = CRAFTING_TYPE_JEWELRY       , quest_name = "Jewelry Crafting Writ"}
-, { abbr = "al", order = 5, ct = CRAFTING_TYPE_ALCHEMY       , quest_name = "Alchemist Writ"}
-, { abbr = "en", order = 6, ct = CRAFTING_TYPE_ENCHANTING    , quest_name = "Enchanter Writ"}
-, { abbr = "pr", order = 7, ct = CRAFTING_TYPE_PROVISIONING  , quest_name = "Provisioner Writ"}
+  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING }
+, { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER      }
+, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING   }
+, { abbr = "jw", order = 4, ct = CRAFTING_TYPE_JEWELRY       }
+, { abbr = "al", order = 5, ct = CRAFTING_TYPE_ALCHEMY       }
+, { abbr = "en", order = 6, ct = CRAFTING_TYPE_ENCHANTING    }
+, { abbr = "pr", order = 7, ct = CRAFTING_TYPE_PROVISIONING  }
 }
 
 local DWUI = nil
@@ -357,26 +357,24 @@ function CharData:AbsorbQuest(quest_index)
         return
     end
                         -- Find correct index into CharData.quest_status[]
-    local crafting_type = self:QuestNameToCraftingType(qinfo[DW.JQI.quest_name])
-    if not crafting_type then
+    local ctype = LibCraftText.DailyQuestNameToCraftingType(qinfo[DW.JQI.quest_name])
+    if not ctype then
         d("quest_name matches no index: "..tostring(qinfo[DW.JQI.quest_name]))
         return
     end
+    local crafting_type = nil
+    for _,c in pairs(DW.CRAFTING_TYPE) do
+        if c.ct == ctype then
+            crafting_type = c
+            break
+        end
+    end
+
                         -- Accumulate conditions into a quest_status.
     local quest_status = self:AccumulateCondition(quest_index)
-
     return { crafting_type = crafting_type
            , quest_status  = quest_status
            }
-end
-
-function CharData:QuestNameToCraftingType(quest_name)
-    for i, ct in ipairs(DW.CRAFTING_TYPE) do
-        if quest_name:find(ct.quest_name) then
-            return ct
-        end
-    end
-    return nil
 end
 
 -- Return a quest's conditions as a single QuestStatus instance.
@@ -440,7 +438,8 @@ function CharData:IsUpdate17RecipeStep(quest_index, step_index)
     for ci = 1, condition_ct do
         local cinfo = { GetJournalQuestConditionInfo(quest_index, step_index, ci) }
         local c_text = cinfo[DW.JQCI.condition_text]
-        local says_recipes = string.find(c_text:lower(), "recipes")
+        -- local says_recipes = string.find(c_text:lower(), "recipes")
+        local says_recipes = c_text == LibCraftText.DAILY_COND.HINT_PR_BREWERS_COOKS_RECIPES
         if says_recipes then return true end
     end
     return false
@@ -449,7 +448,8 @@ end
 -- If a crafting quest exists in the journal, it either needs to be
 -- crafted, or needs to be turned in.
 function CharData:ConditionTextToState(condition_text)
-    local says_deliver = string.find(condition_text, "Deliver ")
+    local says_deliver = string.find(condition_text
+            , LibCraftText.ROLIS_QUEST_TURN_IN.deliver_substr)
     if says_deliver then
         return DW.STATE_2_NEEDS_TURN_IN
     else
