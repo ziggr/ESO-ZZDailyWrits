@@ -337,52 +337,30 @@ DW.JQCI = {
 -- Fetch a quest's data from server. If it's a crafting quest,
 -- store its quest_status in the appropriate self.quest_status[] slot.
 function CharData:AbsorbQuest(quest_index)
-                        -- SURPRISE there is something broken in
-                        -- alchemy writs right now, GetJournalQuestRepeatType()
-                        -- and GetJournalQuestInfo() can return nothing but
-                        -- 0/nil/"" for alchemy writs. Because ZOS hates me.
 
                         -- Only daily quests matter.
-    local rt = GetJournalQuestRepeatType(quest_index)
-    if rt ~= QUEST_REPEAT_DAILY then
-        -- d(tostring(quest_index).." not daily "..tostring(rt))
-        return
-    end
-                        -- Only daily CRAFTING quests matter.
-    local qinfo = { GetJournalQuestInfo(quest_index) }
-    if qinfo[DW.JQI.quest_type] ~= QUEST_TYPE_CRAFTING then
-        -- d(  tostring(quest_index).." not crafting "
-        --   ..tostring(qinfo[DW.JQI.quest_type])
-        --   .." "..tostring(qinfo[DW.JQI.quest_name]) )
-        return
-    end
+    local quest_name    = qinfo[DW.JQI.quest_name]
+    local crafting_type = LibCraftText.DailyQuestNameToCraftingType(quest_name)
+    if not crafting_type then return end
+
                         -- Find correct index into CharData.quest_status[]
-    local ctype = LibCraftText.DailyQuestNameToCraftingType(qinfo[DW.JQI.quest_name])
-    if not ctype then
-        d("quest_name matches no index: "..tostring(qinfo[DW.JQI.quest_name]))
-        return
-    end
-    local crafting_type = nil
+    local crafting_type_row = nil
     for _,c in pairs(DW.CRAFTING_TYPE) do
-        if c.ct == ctype then
-            crafting_type = c
+        if c.ct == crafting_type then
+            crafting_type_row = c
             break
         end
     end
-
                         -- Accumulate conditions into a quest_status.
     local quest_status = self:AccumulateCondition(quest_index)
-    return { crafting_type = crafting_type
+    return { crafting_type = crafting_type_row
            , quest_status  = quest_status
            }
 end
 
 -- Return a quest's conditions as a single QuestStatus instance.
 function CharData:AccumulateCondition(quest_index)
-local DEBUG = function() end
--- if (quest_index == 9) then DEBUG = function(x) d(x) end end
--- DEBUG = function(x) d(x) end
-
+    local DEBUG = function() end
     local text_list = {}
     local state     = DW.STATE_1_NEEDS_CRAFTING
 
@@ -393,15 +371,15 @@ local DEBUG = function() end
                         -- Ignore final step if it is one of Update 17/Dragon Bones
                         -- "Brewers and Cooks Can Provide Recipes" hints as a step.
     if self:IsUpdate17RecipeStep(quest_index, step_ct) then
-DEBUG("skipping 'Brewers have recipes' step_index:"..tostring(step_ct))
+        DEBUG("skipping 'Brewers have recipes' step_index:"..tostring(step_ct))
         step_ct = step_ct - 1
     end
 
-DEBUG("step_ct:"..tostring(step_ct))
+    DEBUG("step_ct:"..tostring(step_ct))
     local step_index = step_ct
     local sinfo = { GetJournalQuestStepInfo(quest_index, step_index) }
-DEBUG("GetJournalQuestStepInfo()")
-DEBUG(sinfo)
+    DEBUG("GetJournalQuestStepInfo()")
+    DEBUG(sinfo)
 -- d(sinfo)
     local condition_ct = sinfo[DW.JQSI.num_conditions]
     if condition_ct == 0 then -- It's already partially turned in, "Sign Delivery Manifest" time.
@@ -409,13 +387,13 @@ DEBUG(sinfo)
     else
         for ci = 1, condition_ct do
             local cinfo = { GetJournalQuestConditionInfo(quest_index, step_index, ci) }
-    DEBUG("Condition " .. tostring(ci))
-    DEBUG(cinfo)
+            DEBUG("Condition " .. tostring(ci))
+            DEBUG(cinfo)
                             -- If we have not completed all the required counts
                             -- for this condition, then its text matters.
             if cinfo[DW.JQCI.is_visible]
                     and ( cinfo[DW.JQCI.current] < cinfo[DW.JQCI.max] ) then
-            local c_text = cinfo[DW.JQCI.condition_text]
+                local c_text = cinfo[DW.JQCI.condition_text]
                 table.insert(text_list, c_text)
                 state = DW.StateMax(state, self:ConditionTextToState(c_text))
             end
@@ -449,7 +427,7 @@ end
 -- crafted, or needs to be turned in.
 function CharData:ConditionTextToState(condition_text)
     local says_deliver = string.find(condition_text
-            , LibCraftText.ROLIS_QUEST_TURN_IN.deliver_substr)
+            , LibCraftText.DAILY_COND.DELIVER_NEAREST_QUARTERMASTER)
     if says_deliver then
         return DW.STATE_2_NEEDS_TURN_IN
     else
