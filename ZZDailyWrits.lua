@@ -107,15 +107,15 @@ end
 
 -- Scan the "Quest Journal" for active crafting quests.
 function CharData:ScanJournal()
-    local quest_ct = GetNumJournalQuests()
+    local quest_ct      = GetNumJournalQuests()
     local seen_quest_ct = 0
-    local quest_status = {}
+    local quest_status  = {}
+    local ct_to_qi      = {}
     for qi = 1, MAX_JOURNAL_QUESTS do
         local x = self:AbsorbQuest(qi)
         if x then
             quest_status[x.crafting_type.order] = x.quest_status
---d("Set qs["..tostring(x.crafting_type.order).."]")
---d(x)
+            ct_to_qi[x.crafting_type.ct] = qi
                         -- +++ Early-exit loop once we've seen
                         -- +++ all the quests in the journal.
             seen_quest_ct = seen_quest_ct + 1
@@ -135,7 +135,7 @@ function CharData:ScanJournal()
         local new_state = self.quest_status[i].state
         if (new_state == DW.STATE_1_NEEDS_CRAFTING)
                 and (prev_state ~= new_state) then
-            self:EnqueueCrafting(ct.ct, max_style)
+            self:EnqueueCrafting(ct.ct, ct_to_qi[ct.ct])
         end
 
                         -- If we just transitioned into "Needs crafting"
@@ -147,8 +147,6 @@ function CharData:ScanJournal()
             zo_callLater(function() DW.ShowWindow() end, 250)
         end
     end
---d("char_data.quest_status:  ct="..#self.quest_status)
---d(self.quest_status[2])
 end
 
 -- When did the daily crafting writs reset? 10pm US Pacific Standard Time
@@ -339,6 +337,7 @@ DW.JQCI = {
 function CharData:AbsorbQuest(quest_index)
 
                         -- Only daily quests matter.
+    local qinfo         = { GetJournalQuestInfo(quest_index) }
     local quest_name    = qinfo[DW.JQI.quest_name]
     local crafting_type = LibCraftText.DailyQuestNameToCraftingType(quest_name)
     if not crafting_type then return end
@@ -417,7 +416,7 @@ function CharData:IsUpdate17RecipeStep(quest_index, step_index)
         local cinfo = { GetJournalQuestConditionInfo(quest_index, step_index, ci) }
         local c_text = cinfo[DW.JQCI.condition_text]
         -- local says_recipes = string.find(c_text:lower(), "recipes")
-        local says_recipes = c_text == LibCraftText.DAILY_COND.HINT_PR_BREWERS_COOKS_RECIPES
+        local says_recipes = c_text == LibCraftText.DAILY.COND.HINT_PR_BREWERS_COOKS_RECIPES
         if says_recipes then return true end
     end
     return false
@@ -427,7 +426,7 @@ end
 -- crafted, or needs to be turned in.
 function CharData:ConditionTextToState(condition_text)
     local says_deliver = string.find(condition_text
-            , LibCraftText.DAILY_COND.DELIVER_NEAREST_QUARTERMASTER)
+            , LibCraftText.DAILY.COND.DELIVER_NEAREST_QUARTERMASTER)
     if says_deliver then
         return DW.STATE_2_NEEDS_TURN_IN
     else
@@ -460,7 +459,7 @@ local NAME = { [REJERA] = "Rejera"
 -- Now would be an excellent time to enqueue items for crafting.
 --
 -- crafting_type is CRAFTING_TYPE_XXX
-function CharData:EnqueueCrafting(crafting_type)
+function CharData:EnqueueCrafting(crafting_type, quest_index)
                         -- Requires Dolgubon's Lazy Set Crafter
     if not DolgubonSetCrafter then
         d("Autoqueue skipped: requires Dolgubon Lazy Set Crafter")
@@ -514,7 +513,7 @@ function CharData:EnqueueCrafting(crafting_type)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
         if not (DolgubonSetCrafter.LazyCrafter.CraftEnchantingItemId) then
-            d(   "ZZDailyWrits: Set Crafter doesn't load enchanting support."
+            d(   "ZZDailyWrits: Set Crafter didn't load enchanting support."
               .. " Enable add-on Dolgubon's Lazy Writ Crafter.")
             return nil
         end
@@ -528,8 +527,34 @@ function CharData:EnqueueCrafting(crafting_type)
           station     = CRAFTING_TYPE_ENCHANTING
         }
         self:LLC_Enqueue(q, constants)
+    elseif crafting_type == CRAFTING_TYPE_PROVISIONING then
+        if not (DolgubonSetCrafter.LazyCrafter.CraftProvisioningItemByRecipeIndex) then
+            d("ZZDailyWrits: Set Crafter didn't load provisioning"
+              .." recipe-by-index support.")
+        end
+        local cond_list = LibCraftText.ParseQuest(quest_index)
+        local queued_ct = 0
+        for _,parse in ipairs(cond_list) do
+            if      parse.item
+                and parse.item.recipe_list_index
+                and parse.item.recipe_index then
+                local q = { { count             = 4
+                            , recipe_list_index = parse.item.recipe_list_index
+                            , recipe_index      = parse.item.recipe_index
+                            }
+                          }
+                local constants = {
+                  station     = CRAFTING_TYPE_PROVISIONING
+                }
+                self:LLC_Enqueue(q, constants)
+                queued_ct = queued_ct + 1
+            end
+        end
+        if queued_ct <= 0 then
+            d("Autoqueue skipped: PR writ not parsed.")
+        end
     else
-        d("Autoqueue skipped: Only EN/BS/CL/WW supported.")
+        d("Autoqueue skipped: AL/JW supported.")
     end
 end
 
@@ -598,6 +623,8 @@ function CharData:LLC_ToOneRequest(qe, constants)
     DolgubonSetCrafter.savedvars.counter = DolgubonSetCrafter.savedvars.counter + 1
     local reference = DolgubonSetCrafter.savedvars.counter
 
+                        -- Is it a Smithing request? They all follow the same
+                        -- format.
     local sm = { [CRAFTING_TYPE_BLACKSMITHING] = 1
                , [CRAFTING_TYPE_CLOTHIER     ] = 1
                , [CRAFTING_TYPE_WOODWORKING  ] = 1
@@ -677,6 +704,33 @@ function CharData:LLC_ToOneRequest(qe, constants)
         request_table.Reference         =   reference
         request_table.CraftRequestTable =   craft_request_table
         request_table.llc_func          = "CraftEnchantingItemId"
+        return request_table
+    elseif constants.station == CRAFTING_TYPE_PROVISIONING then
+        local craft_request_table = {
+          qe.recipeListIndex   -- 1
+        , qe.recipeIndex       -- 2
+        , qe.timesToMake or 1  -- 3 timesToMake
+        , true                 -- 4 autocraft
+        , reference            -- 5 reference
+        }
+
+                        -- Lie to Set Crafter, tell it that we're enqueing
+                        -- an Argonian 1h axe or something, just to prevent
+                        -- it from crashing with nil pointer errors as it
+                        -- calculates material requirements.
+
+        local C = CharData.ToDolCell   -- for less typing
+        local request_table = {}
+        request_table.Pattern           = C(1                 , "food"    )
+        request_table.Weight            = C(1                 , NAME[qe.potency])
+        request_table.Level             = C(150               , NAME[qe.essence])
+        request_table.Style             = C(1                 , NAME[qe.aspect ])
+        request_table.Trait             = C(0                 , ""              )
+        request_table.Set               = C(1                 , ""              )
+        request_table.Quality           = C(1                 , "white"         )
+        request_table.Reference         =   reference
+        request_table.CraftRequestTable =   craft_request_table
+        request_table.llc_func          = "CraftProvisioningItemByRecipeIndex"
         return request_table
     end
 
