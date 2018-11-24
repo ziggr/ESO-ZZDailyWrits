@@ -569,7 +569,7 @@ function CharData:LLC_Enqueue(q, constants)
                         -- and cannot dequeue completed glyphs after crafting.
                         -- The result is after crafting the Set Crafter queue
                         -- holds leftover requests that don't really exist
-                        -- anymore in LLC. So don't put enchanting items in the
+                        -- anymore in LLC. So don't put non-smithing items in the
                         -- Set Crafter queue. Just the LLC queue.
             if dol_request.llc_func == "CraftSmithingItemByLevel" then
                 table.insert(DOL.savedvars.queue, dol_request)
@@ -707,27 +707,14 @@ function CharData:LLC_ToOneRequest(qe, constants)
         return request_table
     elseif constants.station == CRAFTING_TYPE_PROVISIONING then
         local craft_request_table = {
-          qe.recipeListIndex   -- 1
-        , qe.recipeIndex       -- 2
-        , qe.timesToMake or 1  -- 3 timesToMake
-        , true                 -- 4 autocraft
-        , reference            -- 5 reference
+          qe.recipe_list_index  -- 1
+        , qe.recipe_index       -- 2
+        , 1                     -- 3 timesToMake, do NOT use qe.count here,
+                                --   we already loop that outside of this function.
+        , true                  -- 4 autocraft
+        , reference             -- 5 reference
         }
-
-                        -- Lie to Set Crafter, tell it that we're enqueing
-                        -- an Argonian 1h axe or something, just to prevent
-                        -- it from crashing with nil pointer errors as it
-                        -- calculates material requirements.
-
-        local C = CharData.ToDolCell   -- for less typing
         local request_table = {}
-        request_table.Pattern           = C(1                 , "food"    )
-        request_table.Weight            = C(1                 , NAME[qe.potency])
-        request_table.Level             = C(150               , NAME[qe.essence])
-        request_table.Style             = C(1                 , NAME[qe.aspect ])
-        request_table.Trait             = C(0                 , ""              )
-        request_table.Set               = C(1                 , ""              )
-        request_table.Quality           = C(1                 , "white"         )
         request_table.Reference         =   reference
         request_table.CraftRequestTable =   craft_request_table
         request_table.llc_func          = "CraftProvisioningItemByRecipeIndex"
@@ -736,6 +723,18 @@ function CharData:LLC_ToOneRequest(qe, constants)
 
     d("ZZDailyWrits bug: unsupported station:"..tostring(constants.station))
 end
+
+-- Why 13x Hearty Garlic Corn Chowder (rli:3 ri:40) and 16x Markarth Mead (rli:8 ri:42)?
+-- function ZZTest()
+--     DolgubonGlobalDebugOutput = d
+--     local q = { { recipe_list_index = 8
+--                 , recipe_index      = 42
+--                 , count             = 4
+--               } }
+--     local constants = { station = CRAFTING_TYPE_PROVISIONING }
+--     CharData:LLC_Enqueue(q, constants)
+-- end
+-- SLASH_COMMANDS["/zz"] = ZZTest
 
 -- File I/O ------------------------------------------------------------------
 
