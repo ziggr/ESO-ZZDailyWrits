@@ -553,8 +553,40 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         if queued_ct <= 0 then
             d("Autoqueue skipped: PR writ not parsed.")
         end
+        elseif crafting_type == CRAFTING_TYPE_ALCHEMY then
+            local cond_list = LibCraftText.ParseQuest(quest_index)
+            for _,parse in ipairs(cond_list) do
+                if parse.trait and parse.solvent then
+                    local m = LibCraftText.MATERIAL -- for less typing
+                        -- Pairs of reagents that I know will produce the right
+                        -- potion/poison name. There are many more pairs, could
+                        -- swap in different ones if these start to become rare
+                        -- or expensive
+
+                    local REAGENT = {
+                        [01] = { m.BLUE_ENTOLOMA    , m.LUMINOUS_RUSSULA } -- "Restore Health"
+                    ,   [02] = { m.EMETIC_RUSSULA   , m.NIRNROOT         } -- "Ravage Health"
+                    ,   [03] = { m.CORN_FLOWER      , m.BUGLOSS          } -- "Restore Magicka"
+                    ,   [04] = { m.EMETIC_RUSSULA   , m.BLUE_ENTOLOMA    } -- "Ravage Magicka"
+                    ,   [05] = { m.DRAGONTHORN      , m.MOUNTAIN_FLOWER  } -- "Restore Stamina"
+                    ,   [06] = { m.STINKHORN        , m.FLESHFLY_LARVA   } -- "Ravage Stamina"
+                    }
+                    local reagent = REAGENT[parse.trait.trait_index]
+
+                    local q = { { count    = 4
+                                , solvent  = parse.solvent.item_id
+                                , reagent1 = reagent[1].item_id
+                                , reagent2 = reagent[2].item_id
+                                } }
+                    local constants = {
+                      station     = CRAFTING_TYPE_ALCHEMY
+                    }
+                    self:LLC_Enqueue(q, constants)
+                end
+            end
+
     else
-        d("Autoqueue skipped: AL/JW supported.")
+        d("Autoqueue skipped: JW unsupported.")
     end
 end
 
@@ -687,20 +719,8 @@ function CharData:LLC_ToOneRequest(qe, constants)
         , reference    -- reference
         }
 
-                        -- Lie to Set Crafter, tell it that we're enqueing
-                        -- an Argonian 1h axe or something, just to prevent
-                        -- it from crashing with nil pointer errors as it
-                        -- calculates material requirements.
-
         local C = CharData.ToDolCell   -- for less typing
         local request_table = {}
-        request_table.Pattern           = C(1                 , "enchanting"    )
-        request_table.Weight            = C(1                 , NAME[qe.potency])
-        request_table.Level             = C(150               , NAME[qe.essence])
-        request_table.Style             = C(1                 , NAME[qe.aspect ])
-        request_table.Trait             = C(0                 , ""              )
-        request_table.Set               = C(1                 , ""              )
-        request_table.Quality           = C(1                 , "white"         )
         request_table.Reference         =   reference
         request_table.CraftRequestTable =   craft_request_table
         request_table.llc_func          = "CraftEnchantingItemId"
@@ -718,6 +738,21 @@ function CharData:LLC_ToOneRequest(qe, constants)
         request_table.Reference         =   reference
         request_table.CraftRequestTable =   craft_request_table
         request_table.llc_func          = "CraftProvisioningItemByRecipeIndex"
+        return request_table
+    elseif constants.station == CRAFTING_TYPE_ALCHEMY then
+        local craft_request_table = {
+          qe.solvent      -- 1 solventId
+        , qe.reagent1     -- 2 reagentId1
+        , qe.reagent2     -- 3 reagentId2
+        , nil             -- 4 reagentId3 (optional, nilable)
+        , 1               -- 5 timesToMake
+        , true            -- 6 autoCraft
+        , reference       -- 7 reference
+        }
+        local request_table             = {}
+        request_table.Reference         = reference
+        request_table.CraftRequestTable = craft_request_table
+        request_table.llc_func          = "CraftAlchemyItemId"
         return request_table
     end
 
