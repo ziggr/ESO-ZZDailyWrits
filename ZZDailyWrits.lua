@@ -8,21 +8,21 @@ DW.default         = { position  = {350,100}
                      , char_data = {}
                      }
 
-local CAN_JEWELRY = ITEM_TRAIT_TYPE_JEWELRY_SWIFT or false
-local CRAFTING_TYPE_JEWELRY = CRAFTING_TYPE_JEWELRY or 7
+local CAN_JEWELRY                   = ITEM_TRAIT_TYPE_JEWELRY_SWIFT or false
+local CRAFTING_TYPE_JEWELRYCRAFTING = CRAFTING_TYPE_JEWELRYCRAFTING or 7
 
 -- Sequence the writs in an order I prefer.
 --
 -- Use these values for craft_type
 --
 DW.CRAFTING_TYPE = {
-  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING }
-, { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER      }
-, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING   }
-, { abbr = "jw", order = 4, ct = CRAFTING_TYPE_JEWELRY       }
-, { abbr = "al", order = 5, ct = CRAFTING_TYPE_ALCHEMY       }
-, { abbr = "en", order = 6, ct = CRAFTING_TYPE_ENCHANTING    }
-, { abbr = "pr", order = 7, ct = CRAFTING_TYPE_PROVISIONING  }
+  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING    }
+, { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER         }
+, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING      }
+, { abbr = "jw", order = 4, ct = CRAFTING_TYPE_JEWELRYCRAFTING  }
+, { abbr = "al", order = 5, ct = CRAFTING_TYPE_ALCHEMY          }
+, { abbr = "en", order = 6, ct = CRAFTING_TYPE_ENCHANTING       }
+, { abbr = "pr", order = 7, ct = CRAFTING_TYPE_PROVISIONING     }
 }
 
 local DWUI = nil
@@ -511,6 +511,16 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
           station     = CRAFTING_TYPE_WOODWORKING
         }
         self:LLC_Enqueue(q, constants)
+    elseif crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING then
+        local q = {
+          { count = 9, pattern_index =  2, name = "necklace"      , weight_name = "jewelry"  }
+        , { count =12, pattern_index =  1, name = "ring"          , weight_name = "jewelry"  }
+        }
+        local constants = {
+          station     = CRAFTING_TYPE_JEWELRYCRAFTING
+        }
+        self:LLC_Enqueue(q, constants)
+
     elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
         if not (DolgubonSetCrafter.LazyCrafter.CraftEnchantingItemId) then
             d(   "ZZDailyWrits: Set Crafter didn't load enchanting support."
@@ -657,10 +667,10 @@ function CharData:LLC_ToOneRequest(qe, constants)
 
                         -- Is it a Smithing request? They all follow the same
                         -- format.
-    local sm = { [CRAFTING_TYPE_BLACKSMITHING] = 1
-               , [CRAFTING_TYPE_CLOTHIER     ] = 1
-               , [CRAFTING_TYPE_WOODWORKING  ] = 1
-               , [CRAFTING_TYPE_JEWELRY      ] = 1
+    local sm = { [CRAFTING_TYPE_BLACKSMITHING   ] = 1
+               , [CRAFTING_TYPE_CLOTHIER        ] = 1
+               , [CRAFTING_TYPE_WOODWORKING     ] = 1
+               , [CRAFTING_TYPE_JEWELRYCRAFTING ] = 1
                }
     if sm[constants.station] then
                         -- API struct passed to LibLazyCrafter for
@@ -677,6 +687,11 @@ function CharData:LLC_ToOneRequest(qe, constants)
         o.quality      = 1 -- white
         o.autocraft    = true
         o.reference    = reference
+
+        if constants.station == CRAFTING_TYPE_JEWELRYCRAFTING then
+            o.styleIndex = nil
+        end
+
                         -- Positional arguments to LibLazyCrafter:CraftSmithingItemByLevel()
         local craft_request_table = {
           o.patternIndex            --  1
@@ -703,7 +718,9 @@ function CharData:LLC_ToOneRequest(qe, constants)
         request_table.Weight            = C(1                 , qe.weight_name )
         request_table.Trait             = C(o.traitIndex      , "none"         )
         request_table.Level             = C(150               , "CP150"        )
-        request_table.Style             = C(o.styleIndex + 1  , "Breton"       )
+        if o.styleIndex then
+            request_table.Style         = C(o.styleIndex + 1  , "Breton"       )
+        end
         request_table.Set               = C(o.setIndex        , "none"         )
         request_table.Quality           = C(o.quality         , "white"        )
         request_table.Reference         =   reference
