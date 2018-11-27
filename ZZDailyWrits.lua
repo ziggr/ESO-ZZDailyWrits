@@ -583,7 +583,12 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
                     }
                     local reagent = REAGENT[parse.trait.trait_index]
 
-                    local q = { { count    = 4
+                        -- Make 16x potions (4 crafts of 4x) or 16x poisons (1 craft of 16x)
+                    local count   = 4
+                    if parse.solvent == LibCraftText.MATERIAL.ALKAHEST then
+                        count = 1
+                    end
+                    local q = { { count    = count
                                 , solvent  = parse.solvent.item_id
                                 , reagent1 = reagent[1].item_id
                                 , reagent2 = reagent[2].item_id
@@ -860,6 +865,7 @@ function DW:Initialize()
     local event_id_list = { EVENT_QUEST_ADDED       -- 0 needs acquire -> 1 or 2
                           , EVENT_CRAFT_COMPLETED   -- 1 needs craft   -> 2
                           , EVENT_QUEST_COMPLETE    -- 2 needs turn in -> 3
+                          , EVENT_QUEST_REMOVED     -- n anything --> 0 acquire or 4 done
                           }
     for _, event_id in ipairs(event_id_list) do
         EVENT_MANAGER:RegisterForEvent( DW.name
@@ -973,7 +979,45 @@ function DW:DisplayCharData()
         ui_status:SetText("|c"..state.color..state.id.."|r")
         ui_label:SetText( "|c"..state.color..ct.abbr .."|r")
     end
+
+                        -- Don't forget your XP potion!
+    local is_xp_active = DW.IsXPBuffed()
+    local status = "need"
+    local color  = DW.STATE_1_NEEDS_CRAFTING.color
+    if is_xp_active then
+        status = "active"
+        color  = DW.STATE_2_NEEDS_TURN_IN.color
+    end
+    local ui_status = ZZDailyWritsUI:GetNamedChild("_status_xp")
+    local ui_label  = ZZDailyWritsUI:GetNamedChild("_label_xp")
+    ui_status:SetText("|c"..color..status.."|r")
+    ui_label:SetText( "|c"..color.."xp".."|r")
 end
+
+function DW.IsXPBuffed()
+    for i = 1,GetNumBuffs("player") do
+        local o = { GetUnitBuffInfo("player",i)}
+        if o[1] and o[1]:lower():find("experience") then
+            return true
+        end
+        -- d(o)
+    end
+    return false
+end
+
+--  1   string buffName             "Increased Experience"
+--  2, number timeStarted
+--  3, number timeEnding
+--  4, number buffSlot              9
+--  5, number stackCount
+--  6, textureName iconFilename
+--  7, string buffType
+--  8, number BuffEffectType effectType         1
+--  9, number AbilityType abilityType           5
+-- 10, number StatusEffectType statusEffectType 0
+-- 11, number abilityId                         85501
+-- 12, boolean canClickOff                      false
+-- 13, boolean castByPlayer                     true
 
 -- Postamble -----------------------------------------------------------------
 

@@ -8,7 +8,7 @@
         allowBringToTop="true"
         clampedToScreen="true"
         >
-      <Dimensions x="130" y="150" />
+      <Dimensions x="130" y="180" />
 
       <OnMouseUp>ZZDailyWrits:SavePos()</OnMouseUp>
       <!--
@@ -150,6 +150,22 @@
           <Dimensions x="80" y="20" />
         </Label>
 
+        <Label name="$(parent)_label_xp" text="xp" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="5"
+              offsetY="155"
+              relativePoint="TOPLEFT" point="TOPLEFT" />
+          <Dimensions x="50" y="20" />
+        </Label>
+        <Label name="$(parent)_status_xp"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="40"
+              offsetY="155"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="80" y="20" />
+        </Label>
 
       </Controls>
     </TopLevelControl>
