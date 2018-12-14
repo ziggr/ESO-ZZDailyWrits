@@ -28,28 +28,36 @@ DW.CRAFTING_TYPE = {
 local DWUI = nil
 
 
+local COLOR = {
+    ["TEAL"     ] = "66AABB"
+,   ["RED"      ] = "FF3333"
+,   ["GREEN"    ] = "33FF33"
+,   ["GREY"     ] = "AAAAAA"
+,   ["DARK_GREY"] = "333333"
+,   ["ORANGE"   ] = "FF8800"
+}
 
 -- Quest states --------------------------------------------------------------
 
                         -- Not started
                         -- Need to visit a billboard to acquire quest.
-DW.STATE_0_NEEDS_ACQUIRE    = { id = "acquire", order = 0, color = "66AABB" }
+DW.STATE_0_NEEDS_ACQUIRE    = { id = "acquire", order = 0, color = COLOR.TEAL }
 
                         -- Acquired, but at least one item needs to be
                         -- crafted before turnining in.
                         -- Need to visit a crafting station to
                         -- make things.
-DW.STATE_1_NEEDS_CRAFTING   = { id = "craft",   order = 1, color = "FF3333" }
+DW.STATE_1_NEEDS_CRAFTING   = { id = "craft",   order = 1, color = COLOR.RED      }
 
                         -- Crafting of all items completed.
                         -- Need to visit turn-in station.
-DW.STATE_2_NEEDS_TURN_IN    = { id = "turn in", order = 2, color = "33FF33" }
+DW.STATE_2_NEEDS_TURN_IN    = { id = "turn in", order = 2, color = COLOR.GREEN }
 
                         -- Quest completed. Done for the day.
-DW.STATE_3_TURNED_IN        = { id = "done",    order = 3, color = "AAAAAA" }
+DW.STATE_3_TURNED_IN        = { id = "done",    order = 3, color = COLOR.GREY }
 
                         -- Quest does not exist on this server or character.
-DW.STATE_X_IMPOSSIBLE       = { id = "n/a",     order = 9, color = "333333" }
+DW.STATE_X_IMPOSSIBLE       = { id = "n/a",     order = 9, color = COLOR.DARK_GREY }
 DW.STATE_ORDERED = {
   [DW.STATE_0_NEEDS_ACQUIRE .order] = DW.STATE_0_NEEDS_ACQUIRE
 , [DW.STATE_1_NEEDS_CRAFTING.order] = DW.STATE_1_NEEDS_CRAFTING
@@ -455,6 +463,7 @@ local NAME = { [REJERA] = "Rejera"
              , [TA    ] = "Ta"
              }
 
+
 -- We've just switched from "acquire" to "needs crafting".
 -- Now would be an excellent time to enqueue items for crafting.
 --
@@ -793,6 +802,48 @@ end
 -- end
 -- SLASH_COMMANDS["/zz"] = ZZTest
 
+-- Inventory -----------------------------------------------------------------
+
+DW.MATERIAL = {
+  ["RUBEDITE      "] = { inventory_ct = nil
+                       , required_ct  = 348
+                       , label        = "hvy"
+                       , link = "|H0:item:64489:30:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0|h|h"
+                       }
+, ["ANCESTOR_SILK "] = { inventory_ct = nil
+                       , required_ct  = 243
+                       , label        = "lgt"
+                       , link = "|H0:item:64504:30:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0|h|h"
+                       }
+, ["RUBEDO_LEATHER"] = { inventory_ct = nil
+                       , required_ct  = 117
+                       , label        = "med"
+                       , link = "|H0:item:64506:30:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0|h|h"
+                       }
+, ["RUBY_ASH      "] = { inventory_ct = nil
+                       , required_ct  = 336
+                       , label        = "ww"
+                       , link = "|H0:item:64502:30:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0|h|h"
+                       }
+, ["PLATINUM      "] = { inventory_ct = nil
+                       , required_ct  = 255
+                       , label        = "jw"
+                       , link = "|H0:item:135146:30:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0:0|h|h"
+                       }
+}
+
+function DW.ScanInventory()
+    local inventory = {}
+    for key,mat in pairs(DW.MATERIAL) do
+        local ct_list = { GetItemLinkStacks(mat.link)}
+        local ct = 0
+        for _,c in ipairs(ct_list) do ct = ct + c end
+        mat.inventory_ct = ct
+    end
+    return inventory
+end
+
+
 -- File I/O ------------------------------------------------------------------
 
 function CharData:ReadSavedVariables()
@@ -950,6 +1001,7 @@ end
 function ZZDailyWrits.RefreshDataAndUI()
     DW.char_data:ScanJournal()
     DW.char_data:WriteSavedVariables()
+    DW.ScanInventory()
     DW:DisplayCharData()
 end
 
@@ -978,6 +1030,21 @@ function DW:DisplayCharData()
 
         ui_status:SetText("|c"..state.color..state.id.."|r")
         ui_label:SetText( "|c"..state.color..ct.abbr .."|r")
+    end
+
+                        -- Inventory
+    for mat_name, mat in pairs(DW.MATERIAL) do
+        local ui_inv = ZZDailyWritsUI:GetNamedChild("_inv_"..mat.label)
+        local num_str = ZO_AbbreviateNumber(mat.inventory_ct
+                            , NUMBER_ABBREVIATION_PRECISION_LARGEST_UNIT
+                            , true)
+        local color = COLOR.GREY
+        if mat.inventory_ct < mat.required_ct then
+            color = COLOR.RED
+        elseif mat.inventory_ct < 2000 then
+            color = COLOR.ORANGE
+        end
+        ui_inv:SetText("|c"..color..num_str)
     end
 
                         -- Don't forget your XP potion!
