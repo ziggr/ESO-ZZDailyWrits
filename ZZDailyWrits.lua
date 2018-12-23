@@ -27,6 +27,8 @@ DW.CRAFTING_TYPE = {
 
 local DWUI = nil
 
+DW.DAY_CT   = 3               -- must be a multiple of 3
+DW.CYCLE_CT = DW.DAY_CT / 3   -- must be a multiple of 3
 
 local COLOR = {
     ["TEAL"     ] = "66AABB"
@@ -477,15 +479,15 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
 
     if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
-          { count = 3, pattern_index =  3, name = "1h sword"      , weight_name = "heavy" }
-        , { count = 3, pattern_index =  6, name = "2h g.sword"    , weight_name = "heavy" }
-        , { count = 3, pattern_index =  7, name = "dagger"        , weight_name = "heavy" }
-        , { count = 3, pattern_index =  8, name = "chest"         , weight_name = "heavy" }
-        , { count = 3, pattern_index =  9, name = "feet"          , weight_name = "heavy" }
-        , { count = 3, pattern_index = 10, name = "hands"         , weight_name = "heavy" }
-        , { count = 3, pattern_index = 11, name = "head"          , weight_name = "heavy" }
-        , { count = 3, pattern_index = 12, name = "legs"          , weight_name = "heavy" }
-        , { count = 3, pattern_index = 13, name = "shoulders"     , weight_name = "heavy" }
+          { count = DW.CYCLE_CT, pattern_index =  3, name = "1h sword"      , weight_name = "heavy" }
+        , { count = DW.CYCLE_CT, pattern_index =  6, name = "2h g.sword"    , weight_name = "heavy" }
+        , { count = DW.CYCLE_CT, pattern_index =  7, name = "dagger"        , weight_name = "heavy" }
+        , { count = DW.CYCLE_CT, pattern_index =  8, name = "chest"         , weight_name = "heavy" }
+        , { count = DW.CYCLE_CT, pattern_index =  9, name = "feet"          , weight_name = "heavy" }
+        , { count = DW.CYCLE_CT, pattern_index = 10, name = "hands"         , weight_name = "heavy" }
+        , { count = DW.CYCLE_CT, pattern_index = 11, name = "head"          , weight_name = "heavy" }
+        , { count = DW.CYCLE_CT, pattern_index = 12, name = "legs"          , weight_name = "heavy" }
+        , { count = DW.CYCLE_CT, pattern_index = 13, name = "shoulders"     , weight_name = "heavy" }
         }
         local constants = {
           station     = CRAFTING_TYPE_BLACKSMITHING
@@ -493,15 +495,15 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_CLOTHIER then
         local q = {
-          { count = 3, pattern_index =  1, name = "chest"         , weight_name = "light"  }
-        , { count = 3, pattern_index =  3, name = "feet"          , weight_name = "light"  }
-        , { count = 3, pattern_index =  5, name = "head"          , weight_name = "light"  }
-        , { count = 3, pattern_index =  6, name = "legs"          , weight_name = "light"  }
-        , { count = 3, pattern_index =  7, name = "shoulders"     , weight_name = "light"  }
-        , { count = 3, pattern_index =  8, name = "waist"         , weight_name = "light"  }
-        , { count = 3, pattern_index = 11, name = "hands"         , weight_name = "medium" }
-        , { count = 3, pattern_index = 12, name = "head"          , weight_name = "medium" }
-        , { count = 3, pattern_index = 14, name = "shoulders"     , weight_name = "medium" }
+          { count = DW.CYCLE_CT, pattern_index =  1, name = "chest"         , weight_name = "light"  }
+        , { count = DW.CYCLE_CT, pattern_index =  3, name = "feet"          , weight_name = "light"  }
+        , { count = DW.CYCLE_CT, pattern_index =  5, name = "head"          , weight_name = "light"  }
+        , { count = DW.CYCLE_CT, pattern_index =  6, name = "legs"          , weight_name = "light"  }
+        , { count = DW.CYCLE_CT, pattern_index =  7, name = "shoulders"     , weight_name = "light"  }
+        , { count = DW.CYCLE_CT, pattern_index =  8, name = "waist"         , weight_name = "light"  }
+        , { count = DW.CYCLE_CT, pattern_index = 11, name = "hands"         , weight_name = "medium" }
+        , { count = DW.CYCLE_CT, pattern_index = 12, name = "head"          , weight_name = "medium" }
+        , { count = DW.CYCLE_CT, pattern_index = 14, name = "shoulders"     , weight_name = "medium" }
         }
         local constants = {
           station     = CRAFTING_TYPE_CLOTHIER
@@ -509,12 +511,12 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_WOODWORKING then
         local q = {
-          { count = 6, pattern_index =  1, name = "bow"           , weight_name = "wood"  }
-        , { count = 3, pattern_index =  3, name = "flame"         , weight_name = "wood"  }
-        , { count = 3, pattern_index =  4, name = "ice"           , weight_name = "wood"  }
-        , { count = 3, pattern_index =  5, name = "shock"         , weight_name = "wood"  }
-        , { count = 6, pattern_index =  6, name = "resto"         , weight_name = "wood"  }
-        , { count = 6, pattern_index =  2, name = "shield"        , weight_name = "wood"  }
+          { count = DW.CYCLE_CT * 2, pattern_index =  1, name = "bow"           , weight_name = "wood"  }
+        , { count = DW.CYCLE_CT    , pattern_index =  3, name = "flame"         , weight_name = "wood"  }
+        , { count = DW.CYCLE_CT    , pattern_index =  4, name = "ice"           , weight_name = "wood"  }
+        , { count = DW.CYCLE_CT    , pattern_index =  5, name = "shock"         , weight_name = "wood"  }
+        , { count = DW.CYCLE_CT * 2, pattern_index =  6, name = "resto"         , weight_name = "wood"  }
+        , { count = DW.CYCLE_CT * 2, pattern_index =  2, name = "shield"        , weight_name = "wood"  }
         }
         local constants = {
           station     = CRAFTING_TYPE_WOODWORKING
@@ -522,8 +524,8 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING then
         local q = {
-          { count = 9, pattern_index =  2, name = "necklace"      , weight_name = "jewelry"  }
-        , { count =12, pattern_index =  1, name = "ring"          , weight_name = "jewelry"  }
+          { count = DW.CYCLE_CT * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry"  }
+        , { count = DW.CYCLE_CT * 4, pattern_index =  1, name = "ring"          , weight_name = "jewelry"  }
         }
         local constants = {
           station     = CRAFTING_TYPE_JEWELRYCRAFTING
@@ -538,9 +540,9 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         end
 
         local q = {
-          { count = 3, potency = REJERA, essence = DENI  , aspect = TA  }
-        , { count = 3, potency = REJERA, essence = MAKKO , aspect = TA  }
-        , { count = 3, potency = REJERA, essence = OKO   , aspect = TA  }
+          { count = DW.CYCLE_CT, potency = REJERA, essence = DENI  , aspect = TA  }
+        , { count = DW.CYCLE_CT, potency = REJERA, essence = MAKKO , aspect = TA  }
+        , { count = DW.CYCLE_CT, potency = REJERA, essence = OKO   , aspect = TA  }
         }
         local constants = {
           station     = CRAFTING_TYPE_ENCHANTING
@@ -557,7 +559,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
             if      parse.item
                 and parse.item.recipe_list_index
                 and parse.item.recipe_index then
-                local q = { { count             = 4
+                local q = { { count             = DW.CYCLE_CT
                             , recipe_list_index = parse.item.recipe_list_index
                             , recipe_index      = parse.item.recipe_index
                             }
@@ -593,7 +595,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
                     local reagent = REAGENT[parse.trait.trait_index]
 
                         -- Make 16x potions (4 crafts of 4x) or 16x poisons (1 craft of 16x)
-                    local count   = 4
+                    local count   = 1
                     if parse.solvent == LibCraftText.MATERIAL.ALKAHEST then
                         count = 1
                     end
