@@ -466,17 +466,25 @@ local NAME = { [REJERA] = "Rejera"
              }
 
 
+function ZZDailyWrits.GetLLC()
+    local self = ZZDailyWrits
+    if self.LibLazyCrafting then return self.LibLazyCrafting end
+
+    local lib = LibStub:GetLibrary("LibLazyCrafting")
+    self.LibLazyCrafting_lib = lib
+    self.LibLazyCrafting = lib:AddRequestingAddon(
+         self.name                    -- name
+       , true                         -- autocraft
+       , ZZDailyWrits.LLCCompleted    -- functionCallback
+       )
+    return self.LibLazyCrafting
+end
+
 -- We've just switched from "acquire" to "needs crafting".
 -- Now would be an excellent time to enqueue items for crafting.
 --
 -- crafting_type is CRAFTING_TYPE_XXX
 function CharData:EnqueueCrafting(crafting_type, quest_index)
-                        -- Requires Dolgubon's Lazy Set Crafter
-    if not DolgubonSetCrafter then
-        d("Autoqueue skipped: requires Dolgubon Lazy Set Crafter")
-        return
-    end
-
     if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
           { count = DW.CYCLE_CT, pattern_index =  3, name = "1h sword"      , weight_name = "heavy" }
@@ -533,12 +541,6 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:LLC_Enqueue(q, constants)
 
     elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
-        if not (DolgubonSetCrafter.LazyCrafter.CraftEnchantingItemId) then
-            d(   "ZZDailyWrits: Set Crafter didn't load enchanting support."
-              .. " Enable add-on Dolgubon's Lazy Writ Crafter.")
-            return nil
-        end
-
         local q = {
           { count = DW.CYCLE_CT, potency = REJERA, essence = DENI  , aspect = TA  }
         , { count = DW.CYCLE_CT, potency = REJERA, essence = MAKKO , aspect = TA  }
@@ -549,10 +551,6 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         }
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_PROVISIONING then
-        if not (DolgubonSetCrafter.LazyCrafter.CraftProvisioningItemByRecipeIndex) then
-            d("ZZDailyWrits: Set Crafter didn't load provisioning"
-              .." recipe-by-index support.")
-        end
         local cond_list = LibCraftText.ParseQuest(quest_index)
         local queued_ct = 0
         for _,parse in ipairs(cond_list) do
@@ -610,35 +608,21 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
                     self:LLC_Enqueue(q, constants)
                 end
             end
-
-    else
-        d("Autoqueue skipped: JW unsupported.")
     end
 end
 
 function CharData:LLC_Enqueue(q, constants)
-    local DOL = DolgubonSetCrafter -- for less typing
     local queued_ct = 0
+    local llc = ZZDailyWrits.GetLLC()
     for _, qe in ipairs(q) do
         for i = 1, qe.count do
             local dol_request = self:LLC_ToOneRequest(qe, constants)
-
-                        -- Dolgubon's Set Crafter is designed for smithing ONLY
-                        -- and cannot dequeue completed glyphs after crafting.
-                        -- The result is after crafting the Set Crafter queue
-                        -- holds leftover requests that don't really exist
-                        -- anymore in LLC. So don't put non-smithing items in the
-                        -- Set Crafter queue. Just the LLC queue.
-            if dol_request.llc_func == "CraftSmithingItemByLevel" then
-                table.insert(DOL.savedvars.queue, dol_request)
-            end
             local o = dol_request.CraftRequestTable
-            DOL.LazyCrafter[dol_request.llc_func](DOL.LazyCrafter, unpack(o))
+            llc[dol_request.llc_func](llc, unpack(o))
             queued_ct = queued_ct + 1
         end
     end
     d("Autoqueued "..tostring(queued_ct).." requests")
-    DolgubonSetCrafter.updateList()
 end
 
 local function FindMaxStyleMat()
@@ -678,8 +662,8 @@ end
 -- Return a single item, as a structure suitable for enqueuing with
 -- Dolgubon's Lazy Set Crafter.
 function CharData:LLC_ToOneRequest(qe, constants)
-    DolgubonSetCrafter.savedvars.counter = DolgubonSetCrafter.savedvars.counter + 1
-    local reference = DolgubonSetCrafter.savedvars.counter
+    DW.savedVariables.counter = (DW.savedVariables.counter or 0) + 1
+    local reference = DW.savedVariables.counter
 
                         -- Is it a Smithing request? They all follow the same
                         -- format.

@@ -4,7 +4,7 @@
 ## Author: ziggr
 ## APIVersion: 100025
 ## SavedVariables: ZZDailyWritsVars
-## DependsOn: LibCraftText
+## DependsOn: LibCraftText LibLazyCrafting
 
 ZZDailyWrits.lua
 Bindings.xml
