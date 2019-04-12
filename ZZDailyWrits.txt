@@ -1,8 +1,8 @@
 ## Title: ZZDailyWrits
-## Description: ZZDailyWrits version 4.2.1
-## AddOnVersion 421
+## Description: ZZDailyWrits version 4.3.1
+## AddOnVersion 431
 ## Author: ziggr
-## APIVersion: 100025
+## APIVersion: 100026
 ## SavedVariables: ZZDailyWritsVars
 ## DependsOn: LibCraftText LibLazyCrafting
 

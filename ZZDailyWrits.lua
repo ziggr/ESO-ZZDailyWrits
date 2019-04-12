@@ -2,7 +2,7 @@ ZZDailyWrits = {}
 local DW = ZZDailyWrits
 
 DW.name            = "ZZDailyWrits"
-DW.version         = "4.2.1"
+DW.version         = "4.3.1"
 DW.savedVarVersion = 2
 DW.default         = { position  = {350,100}
                      , char_data = {}
