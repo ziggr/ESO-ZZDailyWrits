@@ -784,19 +784,23 @@ end
 --          We COULD key off of "success" and display error redness if fail.
 --  - llc_result is a table with bag/slot id of the crafted item and
 --          its unique_id reference.
+--  - station is often nil for many events, including LLC_NO_FURTHER_CRAFT_POSSIBLE.
 function ZZDailyWrits.LLCCompleted(event, station, llc_result)
                         -- Just finished crafting at this station.
                         -- Auto-exit the station so that we can move on.
     if      event == LLC_NO_FURTHER_CRAFT_POSSIBLE
         and ZZDailyWrits.auto_exit_soon then
-        ZZDailyWrits.auto_exit_soon = false
+        ZZDailyWrits.auto_exit_soon = nil
         SCENE_MANAGER:ShowBaseScene()
+        return
     end
-
                         -- Avoid auto-exiting immediately after connecting
                         -- to a station that LLC cannot craft anything for.
                         -- That would be super-annoying.
-    ZZDailyWrits.auto_exit_soon = true
+    if event == LLC_CRAFT_SUCCESS then
+        ZZDailyWrits.auto_exit_soon = true
+        return
+    end
 end
 
 -- Why 13x Hearty Garlic Corn Chowder (rli:3 ri:40) and 16x Markarth Mead (rli:8 ri:42)?
