@@ -8,7 +8,7 @@
         allowBringToTop="true"
         clampedToScreen="true"
         >
-      <Dimensions x="260" y="180" />
+      <Dimensions x="350" y="180" />
 
       <OnMouseUp>ZZDailyWrits:SavePos()</OnMouseUp>
       <!--
@@ -57,7 +57,15 @@
               />
           <Dimensions x="80" y="20" />
         </Label>
-
+        <Label name="$(parent)_q_bs"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="265"
+              offsetY="5"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="80" y="20" />
+        </Label>
 
         <Label name="$(parent)_label_cl" text="cl" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
@@ -90,6 +98,14 @@
               relativePoint="TOPLEFT" point="TOPLEFT" />
           <Dimensions x="80" y="20" />
         </Label>
+        <Label name="$(parent)_q_cl"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="265"
+              offsetY="25"
+              relativePoint="TOPLEFT" point="TOPLEFT" />
+          <Dimensions x="80" y="20" />
+        </Label>
 
         <Label name="$(parent)_label_ww" text="ww" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
@@ -111,6 +127,15 @@
             text="??" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
               offsetX="125"
+              offsetY="45"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="80" y="20" />
+        </Label>
+        <Label name="$(parent)_q_ww"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="265"
               offsetY="45"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
@@ -142,6 +167,15 @@
               />
           <Dimensions x="80" y="20" />
         </Label>
+        <Label name="$(parent)_q_jw"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="265"
+              offsetY="65"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="80" y="20" />
+        </Label>
 
         <Label name="$(parent)_label_al" text="al" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
@@ -154,6 +188,15 @@
             text="??" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
               offsetX="40"
+              offsetY="85"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="80" y="20" />
+        </Label>
+        <Label name="$(parent)_q_al"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="265"
               offsetY="85"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />
@@ -176,6 +219,15 @@
               />
           <Dimensions x="80" y="20" />
         </Label>
+        <Label name="$(parent)_q_en"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="265"
+              offsetY="105"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="80" y="20" />
+        </Label>
 
         <Label name="$(parent)_label_pr" text="pr" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
@@ -188,6 +240,15 @@
             text="??" font="ZoFontGame" color="CCCCCC" >
           <Anchor relativeTo="$(parent)"
               offsetX="40"
+              offsetY="125"
+              relativePoint="TOPLEFT" point="TOPLEFT"
+              />
+          <Dimensions x="80" y="20" />
+        </Label>
+        <Label name="$(parent)_q_pr"
+            text="??" font="ZoFontGame" color="CCCCCC" >
+          <Anchor relativeTo="$(parent)"
+              offsetX="265"
               offsetY="125"
               relativePoint="TOPLEFT" point="TOPLEFT"
               />

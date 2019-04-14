@@ -856,6 +856,14 @@ function DW.ScanInventory()
     return inventory
 end
 
+function DW.ScanQueue()
+    if not DW.GetLLC().personalQueue then return end
+    local ct = {}
+    for ctype,queue in pairs(DW.GetLLC().personalQueue) do
+        ct[ctype] = #queue
+    end
+    DW.queued_ct = ct
+end
 
 -- File I/O ------------------------------------------------------------------
 
@@ -1015,6 +1023,7 @@ function ZZDailyWrits.RefreshDataAndUI()
     DW.char_data:ScanJournal()
     DW.char_data:WriteSavedVariables()
     DW.ScanInventory()
+    DW.ScanQueue()
     DW:DisplayCharData()
 end
 
@@ -1038,11 +1047,20 @@ function DW:DisplayCharData()
             state = DW.STATE_X_IMPOSSIBLE
         end
 
+        local q_ct      = "??"
+        if DW.queued_ct and 0 < DW.queued_ct[ct.ct] then
+            q_ct = tostring(DW.queued_ct[ct.ct])
+        else
+            q_ct = ""
+        end
+
         local ui_status = ZZDailyWritsUI:GetNamedChild("_status_"..ct.abbr)
         local ui_label  = ZZDailyWritsUI:GetNamedChild("_label_" ..ct.abbr)
+        local ui_q      = ZZDailyWritsUI:GetNamedChild("_q_"     ..ct.abbr)
 
         ui_status:SetText("|c"..state.color..state.id.."|r")
-        ui_label:SetText( "|c"..state.color..ct.abbr .."|r")
+        ui_label:SetText ("|c"..state.color..ct.abbr .."|r")
+        ui_q:SetText     ("|c"..state.color..q_ct    .."|r")
     end
 
                         -- Inventory
@@ -1084,6 +1102,35 @@ function DW.IsXPBuffed()
     end
     return false
 end
+
+                        -- Abandon all the daily crafting quests we can find.
+                        -- Return the count of quests that we abandoned.
+function DW.AbandonDailies()
+                        -- Iterate backwards to avoid problems with quest
+                        -- indexes changing each time we delete a quest.
+    local abandon_ct = 0
+    for quest_index = MAX_JOURNAL_QUESTS,1,-1  do
+        local jqi = { GetJournalQuestInfo(quest_index) }
+        local repeat_type = GetJournalQuestRepeatType(quest_index)
+        if jqi[DW.JQI.quest_type] == QUEST_TYPE_CRAFTING
+            and repeat_type == QUEST_REPEAT_DAILY then
+            local name = jqi[DW.JQI.quest_name]
+            d(string.format("abandoned %d:%s", quest_index, tostring(name)))
+            AbandonQuest(quest_index)
+            abandon_ct = abandon_ct + 1
+        end
+    end
+    return abandon_ct
+end
+
+function DW.SlashCommand(args)
+    if args:lower() == "abandon" then
+        DW.AbandonDailies()
+    else
+        d("Unknown command: '"..tostring(args).."'")
+    end
+end
+SLASH_COMMANDS["/zzdw"] = DW.SlashCommand
 
 --  1   string buffName             "Increased Experience"
 --  2, number timeStarted
