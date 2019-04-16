@@ -487,68 +487,73 @@ end
 function CharData:EnqueueCrafting(crafting_type, quest_index)
     if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
-          { count = DW.CYCLE_CT, pattern_index =  3, name = "1h sword"      , weight_name = "heavy" }
-        , { count = DW.CYCLE_CT, pattern_index =  6, name = "2h g.sword"    , weight_name = "heavy" }
-        , { count = DW.CYCLE_CT, pattern_index =  7, name = "dagger"        , weight_name = "heavy" }
-        , { count = DW.CYCLE_CT, pattern_index =  8, name = "chest"         , weight_name = "heavy" }
-        , { count = DW.CYCLE_CT, pattern_index =  9, name = "feet"          , weight_name = "heavy" }
-        , { count = DW.CYCLE_CT, pattern_index = 10, name = "hands"         , weight_name = "heavy" }
-        , { count = DW.CYCLE_CT, pattern_index = 11, name = "head"          , weight_name = "heavy" }
-        , { count = DW.CYCLE_CT, pattern_index = 12, name = "legs"          , weight_name = "heavy" }
-        , { count = DW.CYCLE_CT, pattern_index = 13, name = "shoulders"     , weight_name = "heavy" }
+          { count = DW.CYCLE_CT, pattern_index =  3, name = "1h sword"      , weight_name = "heavy", link="|H1:item:43531:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index =  6, name = "2h g.sword"    , weight_name = "heavy", link="|H1:item:43534:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index =  7, name = "dagger"        , weight_name = "heavy", link="|H1:item:43535:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index =  8, name = "chest"         , weight_name = "heavy", link="|H1:item:43537:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index =  9, name = "feet"          , weight_name = "heavy", link="|H1:item:43538:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index = 10, name = "hands"         , weight_name = "heavy", link="|H1:item:43539:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index = 11, name = "head"          , weight_name = "heavy", link="|H1:item:43562:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index = 12, name = "legs"          , weight_name = "heavy", link="|H1:item:43540:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index = 13, name = "shoulders"     , weight_name = "heavy", link="|H1:item:43541:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
         }
         local constants = {
           station     = CRAFTING_TYPE_BLACKSMITHING
         }
+        self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_CLOTHIER then
         local q = {
-          { count = DW.CYCLE_CT, pattern_index =  1, name = "chest"         , weight_name = "light"  }
-        , { count = DW.CYCLE_CT, pattern_index =  3, name = "feet"          , weight_name = "light"  }
-        , { count = DW.CYCLE_CT, pattern_index =  5, name = "head"          , weight_name = "light"  }
-        , { count = DW.CYCLE_CT, pattern_index =  6, name = "legs"          , weight_name = "light"  }
-        , { count = DW.CYCLE_CT, pattern_index =  7, name = "shoulders"     , weight_name = "light"  }
-        , { count = DW.CYCLE_CT, pattern_index =  8, name = "waist"         , weight_name = "light"  }
-        , { count = DW.CYCLE_CT, pattern_index = 11, name = "hands"         , weight_name = "medium" }
-        , { count = DW.CYCLE_CT, pattern_index = 12, name = "head"          , weight_name = "medium" }
-        , { count = DW.CYCLE_CT, pattern_index = 14, name = "shoulders"     , weight_name = "medium" }
+          { count = DW.CYCLE_CT, pattern_index =  1, name = "chest"         , weight_name = "light"  , link="|H1:item:43543:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index =  3, name = "feet"          , weight_name = "light"  , link="|H1:item:43544:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index =  5, name = "head"          , weight_name = "light"  , link="|H1:item:43564:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index =  6, name = "legs"          , weight_name = "light"  , link="|H1:item:43546:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index =  7, name = "shoulders"     , weight_name = "light"  , link="|H1:item:43547:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index =  8, name = "waist"         , weight_name = "light"  , link="|H1:item:43548:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index = 11, name = "hands"         , weight_name = "medium" , link="|H1:item:43552:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index = 12, name = "head"          , weight_name = "medium" , link="|H1:item:43563:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = DW.CYCLE_CT, pattern_index = 14, name = "shoulders"     , weight_name = "medium" , link="|H1:item:43554:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
         }
         local constants = {
           station     = CRAFTING_TYPE_CLOTHIER
         }
+        self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_WOODWORKING then
         local q = {
-          { count = DW.CYCLE_CT * 2, pattern_index =  1, name = "bow"           , weight_name = "wood"  }
-        , { count = DW.CYCLE_CT    , pattern_index =  3, name = "flame"         , weight_name = "wood"  }
-        , { count = DW.CYCLE_CT    , pattern_index =  4, name = "ice"           , weight_name = "wood"  }
-        , { count = DW.CYCLE_CT    , pattern_index =  5, name = "shock"         , weight_name = "wood"  }
-        , { count = DW.CYCLE_CT * 2, pattern_index =  6, name = "resto"         , weight_name = "wood"  }
-        , { count = DW.CYCLE_CT * 2, pattern_index =  2, name = "shield"        , weight_name = "wood"  }
+          { count = DW.CYCLE_CT * 2, pattern_index =  1, name = "bow"           , weight_name = "wood" , link="|H1:item:43549:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = DW.CYCLE_CT    , pattern_index =  3, name = "flame"         , weight_name = "wood" , link="|H1:item:43557:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = DW.CYCLE_CT    , pattern_index =  4, name = "ice"           , weight_name = "wood" , link="|H1:item:43558:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = DW.CYCLE_CT    , pattern_index =  5, name = "shock"         , weight_name = "wood" , link="|H1:item:43559:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = DW.CYCLE_CT * 2, pattern_index =  6, name = "resto"         , weight_name = "wood" , link="|H1:item:43560:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = DW.CYCLE_CT * 2, pattern_index =  2, name = "shield"        , weight_name = "wood" , link="|H1:item:43556:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h"  }
         }
         local constants = {
           station     = CRAFTING_TYPE_WOODWORKING
         }
+        self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING then
         local q = {
-          { count = DW.CYCLE_CT * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry"  }
-        , { count = DW.CYCLE_CT * 4, pattern_index =  1, name = "ring"          , weight_name = "jewelry"  }
+          { count = DW.CYCLE_CT * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry" , link="|H1:item:43561:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
+        , { count = DW.CYCLE_CT * 4, pattern_index =  1, name = "ring"          , weight_name = "jewelry" , link="|H1:item:43536:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
         }
         local constants = {
           station     = CRAFTING_TYPE_JEWELRYCRAFTING
         }
+        self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
 
     elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
         local q = {
-          { count = DW.CYCLE_CT, potency = REJERA, essence = DENI  , aspect = TA  }
-        , { count = DW.CYCLE_CT, potency = REJERA, essence = MAKKO , aspect = TA  }
-        , { count = DW.CYCLE_CT, potency = REJERA, essence = OKO   , aspect = TA  }
+          { count = DW.CYCLE_CT, potency = REJERA, essence = DENI  , aspect = TA , link="|H1:item:26588:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
+        , { count = DW.CYCLE_CT, potency = REJERA, essence = MAKKO , aspect = TA , link="|H1:item:26582:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
+        , { count = DW.CYCLE_CT, potency = REJERA, essence = OKO   , aspect = TA , link="|H1:item:26580:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
         }
         local constants = {
           station     = CRAFTING_TYPE_ENCHANTING
         }
+        self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_PROVISIONING then
         local cond_list = LibCraftText.ParseQuest(quest_index)
@@ -608,6 +613,89 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
                     self:LLC_Enqueue(q, constants)
                 end
             end
+    end
+end
+
+function DW.MaskedLink(orig, mask)
+    local orig_w = {zo_strsplit(':', orig)}
+    local mask_w = {zo_strsplit(':', mask)}
+    local result_w = {}
+    for i,o in ipairs(orig_w) do
+        if (mask_w[i] ~= "0") then
+            table.insert(result_w, o)
+        else
+            table.insert(result_w, "0")
+        end
+    end
+    local result = table.concat(result_w,":")
+    return result
+end
+
+-- Scan inventory for all matching items, remove from q.
+--
+-- I got sick of crafting a full 3 days' worth of stuff when I had at least
+-- 1 day's worth of stuff already sitting in my bag.
+function CharData:RemoveIfAlreadyInBag(q, constants)
+    local supported = {
+      [CRAFTING_TYPE_BLACKSMITHING   ] = true
+    , [CRAFTING_TYPE_CLOTHIER        ] = true
+    , [CRAFTING_TYPE_WOODWORKING     ] = true
+    , [CRAFTING_TYPE_JEWELRYCRAFTING ] = true
+    , [CRAFTING_TYPE_ALCHEMY         ] = false
+    , [CRAFTING_TYPE_ENCHANTING      ] = true
+    , [CRAFTING_TYPE_PROVISIONING    ] = false
+    }
+    if not supported[constants.station] then return end
+
+    -- see https://en.uesp.net/wiki/Online:Item_Link
+    --
+    -- fields 1-3 = whatcha making
+    -- field  16  = motif, don't care!
+    -- field  17  = crafted?
+    --                       1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    local mask   = "|H1:item:1:1:1:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"
+
+                        -- How many of these things did you want?
+    local counts = {}
+    for _,qi in ipairs(q) do
+        if qi.link then
+            local masked_link = DW.MaskedLink(qi.link, mask)
+            counts[masked_link] = counts[masked_link] or { want = 0, have = 0 }
+            counts[masked_link].want = counts[masked_link].want + qi.count or 1
+        end
+    end
+
+                        -- How many of these do we have?
+    local bag_id = BAG_BACKPACK
+    local slot_ct = GetBagSize(bag_id)
+    for slot_index = 0, slot_ct do
+        local inv_link = GetItemLink(bag_id, slot_index, LINK_STYLE_BRACKETS)
+        local inv_masked     = DW.MaskedLink(inv_link, mask)
+        if counts[inv_masked] then
+            counts[inv_masked].have = 1 + (counts[inv_masked].have or 0)
+            d("Found: "..inv_link)
+        end
+    end
+
+                        -- Reduce or remove queued requests that already
+                        -- have 1 or more resulting items  in inventory.
+    for i = #q,1,-1 do
+        local qi = q[i]
+        if qi.link then
+            local masked_link = DW.MaskedLink(qi.link, mask)
+            local count_elem  = counts[masked_link]
+            -- d(qi.link)
+            if count_elem then
+                if count_elem.want <= count_elem.have then
+                    table.remove(q,i)
+                    d("Removed all: "..qi.link)
+                elseif (0 < count_elem.have) then
+                    qi.count = count_elem.want - count_elem.have
+                    d("Removed "..tostring(count_elem.have)
+                      ..", left "..tostring(qi.count)..": "..qi.link)
+                end
+            end
+        end
     end
 end
 
