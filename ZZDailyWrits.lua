@@ -534,21 +534,24 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING then
+        local jw_mult = math.max(2,DW.CYCLE_CT)
         local q = {
-          { count = DW.CYCLE_CT * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry" , link="|H1:item:43561:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
-        , { count = DW.CYCLE_CT * 4, pattern_index =  1, name = "ring"          , weight_name = "jewelry" , link="|H1:item:43536:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
+          { count = jw_mult * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry" , link="|H1:item:43561:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
+        , { count = jw_mult * 4, pattern_index =  1, name = "ring"          , weight_name = "jewelry" , link="|H1:item:43536:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
         }
         local constants = {
           station     = CRAFTING_TYPE_JEWELRYCRAFTING
         }
+
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
 
     elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
+        local en_mult = math.max(3,DW.CYCLE_CT)
         local q = {
-          { count = DW.CYCLE_CT, potency = REJERA, essence = DENI  , aspect = TA , link="|H1:item:26588:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
-        , { count = DW.CYCLE_CT, potency = REJERA, essence = MAKKO , aspect = TA , link="|H1:item:26582:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
-        , { count = DW.CYCLE_CT, potency = REJERA, essence = OKO   , aspect = TA , link="|H1:item:26580:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
+          { count = en_mult, potency = REJERA, essence = DENI  , aspect = TA , link="|H1:item:26588:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
+        , { count = en_mult, potency = REJERA, essence = MAKKO , aspect = TA , link="|H1:item:26582:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
+        , { count = en_mult, potency = REJERA, essence = OKO   , aspect = TA , link="|H1:item:26580:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
         }
         local constants = {
           station     = CRAFTING_TYPE_ENCHANTING
