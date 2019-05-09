@@ -485,6 +485,10 @@ end
 --
 -- crafting_type is CRAFTING_TYPE_XXX
 function CharData:EnqueueCrafting(crafting_type, quest_index)
+    if not DW.savedVariables.enable then
+        return
+    end
+
     if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
           { count = DW.CYCLE_CT, pattern_index =  3, name = "1h sword"      , weight_name = "heavy", link="|H1:item:43531:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
