@@ -27,7 +27,7 @@ DW.CRAFTING_TYPE = {
 
 local DWUI = nil
 
-DW.DAY_CT   = 3               -- must be a multiple of 3
+DW.DAY_CT   = 0 -- 3               -- must be a multiple of 3
 DW.CYCLE_CT = DW.DAY_CT / 3   -- must be a multiple of 3
 
 local COLOR = {
@@ -612,6 +612,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
                     if parse.solvent == LibCraftText.MATERIAL.ALKAHEST then
                         count = 1
                     end
+                    if DW.CYCLE_CT <= 0 then count = 0 end
                     local q = { { count    = count
                                 , solvent  = parse.solvent.item_id
                                 , reagent1 = reagent[1].item_id
