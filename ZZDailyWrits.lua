@@ -2,7 +2,7 @@ ZZDailyWrits = {}
 local DW = ZZDailyWrits
 
 DW.name            = "ZZDailyWrits"
-DW.version         = "4.3.1"
+DW.version         = "5.0.2"
 DW.savedVarVersion = 2
 DW.default         = { position  = {350,100}
                      , char_data = {}
@@ -437,6 +437,7 @@ end
 function CharData:ConditionTextToState(condition_text)
     local deliver_list = { LibCraftText.DAILY.COND.DELIVER_NEAREST_QUARTERMASTER
                          , LibCraftText.DAILY.COND.DELIVER_ALLIANCE_DEPOT
+                         , LibCraftText.DAILY.COND.DELIVER_CONSORTIUM_TRADEPOST
                          }
     for _,cond_text in ipairs(deliver_list) do
         local says_deliver = string.find(condition_text, cond_text)
@@ -444,6 +445,7 @@ function CharData:ConditionTextToState(condition_text)
             return DW.STATE_2_NEEDS_TURN_IN
         end
     end
+    DW.log.Debug(condition_text)
     return DW.STATE_1_NEEDS_CRAFTING
 end
 
@@ -1018,6 +1020,8 @@ function DW:Initialize()
     if not DWUI then
         DWUI = ZZDailyWritsUI
     end
+
+DW.log = LibDebugLogger.Create(self.name)
 
     DW.char_data = CharData:New()
 
