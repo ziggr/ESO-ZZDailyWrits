@@ -438,6 +438,7 @@ function CharData:ConditionTextToState(condition_text)
     local deliver_list = { LibCraftText.DAILY.COND.DELIVER_NEAREST_QUARTERMASTER
                          , LibCraftText.DAILY.COND.DELIVER_ALLIANCE_DEPOT
                          , LibCraftText.DAILY.COND.DELIVER_CONSORTIUM_TRADEPOST
+                         , LibCraftText.DAILY.COND.DELIVER_REFUGEE_RELIEF
                          }
     for _,cond_text in ipairs(deliver_list) do
         local says_deliver = string.find(condition_text, cond_text)

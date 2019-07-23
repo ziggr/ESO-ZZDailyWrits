@@ -4,350 +4,382 @@ ZZDailyWritsVars =
     {
         ["@ziggr"] = 
         {
-            ["Zecorwyn"] = 
+            ["Daenir Haggertyn"] = 
             {
+                ["version"] = 2,
                 ["position"] = 
                 {
-                    [2] = 580,
-                    [1] = 8,
+                    [2] = 100,
+                    [1] = 350,
                 },
-                ["version"] = 2,
                 ["char_data"] = 
                 {
-                    [1] = 
-                    {
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["state"] = 2,
-                        ["acquired_ts"] = 1494434174,
-                        ["abbr"] = "bs",
-                    },
-                    [2] = 
-                    {
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["state"] = 2,
-                        ["acquired_ts"] = 1494434174,
-                        ["abbr"] = "cl",
-                    },
-                    [3] = 
-                    {
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["state"] = 2,
-                        ["acquired_ts"] = 1494434174,
-                        ["abbr"] = "ww",
-                    },
-                    [4] = 
-                    {
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["state"] = 2,
-                        ["acquired_ts"] = 1494434193,
-                        ["abbr"] = "al",
-                    },
-                    [5] = 
-                    {
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["state"] = 2,
-                        ["acquired_ts"] = 1494434193,
-                        ["abbr"] = "en",
-                    },
-                    [6] = 
-                    {
-                        ["text"] = "Deliver Goods to Refugee Relief Site",
-                        ["state"] = 2,
-                        ["acquired_ts"] = 1494434192,
-                        ["abbr"] = "pr",
-                    },
                 },
             },
             ["Lilwen"] = 
             {
+                ["version"] = 2,
                 ["position"] = 
                 {
                     [2] = 100,
                     [1] = 350,
                 },
+                ["char_data"] = 
+                {
+                },
+            },
+            ["ziggr-alt-six"] = 
+            {
                 ["version"] = 2,
+                ["position"] = 
+                {
+                    [2] = 100,
+                    [1] = 350,
+                },
                 ["char_data"] = 
                 {
                     [1] = 
                     {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494348916,
                         ["abbr"] = "bs",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
                     },
                     [2] = 
                     {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494348916,
                         ["abbr"] = "cl",
+                        ["acquired_ts"] = 1543354933,
+                        ["state"] = 0,
+                        ["text"] = "",
                     },
                     [3] = 
                     {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494348915,
                         ["abbr"] = "ww",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
                     },
                     [4] = 
                     {
+                        ["abbr"] = "jw",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
                         ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494348920,
-                        ["abbr"] = "al",
                     },
                     [5] = 
                     {
+                        ["abbr"] = "al",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
                         ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494348920,
-                        ["abbr"] = "en",
                     },
                     [6] = 
                     {
+                        ["abbr"] = "en",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
                         ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494348929,
+                    },
+                    [7] = 
+                    {
                         ["abbr"] = "pr",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
                     },
                 },
-            },
-            ["$AccountWide"] = 
-            {
-                ["position"] = 
-                {
-                    [2] = 503,
-                    [1] = 279,
-                },
-                ["version"] = 1,
             },
             ["Zhaksyr the Mighty"] = 
             {
-                ["position"] = 
-                {
-                    [2] = 100,
-                    [1] = 350,
-                },
                 ["version"] = 2,
                 ["char_data"] = 
                 {
                     [1] = 
                     {
-                        ["state"] = 2,
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["acquired_ts"] = 1494432808,
                         ["abbr"] = "bs",
+                        ["text"] = "",
+                        ["state"] = 0,
+                        ["acquired_ts"] = 0,
                     },
                     [2] = 
                     {
-                        ["state"] = 2,
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["acquired_ts"] = 1494432807,
                         ["abbr"] = "cl",
+                        ["text"] = "Deliver Goods to Nearest Writ Quartermaster",
+                        ["state"] = 2,
+                        ["acquired_ts"] = 1563646750,
                     },
                     [3] = 
                     {
-                        ["state"] = 2,
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["acquired_ts"] = 1494432808,
                         ["abbr"] = "ww",
+                        ["text"] = "",
+                        ["state"] = 0,
+                        ["acquired_ts"] = 0,
                     },
                     [4] = 
                     {
-                        ["state"] = 2,
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["acquired_ts"] = 1494432023,
-                        ["abbr"] = "al",
+                        ["abbr"] = "jw",
+                        ["text"] = "",
+                        ["state"] = 0,
+                        ["acquired_ts"] = 0,
                     },
                     [5] = 
                     {
-                        ["state"] = 2,
-                        ["text"] = "Deliver Goods to Belkarth Quartermaster",
-                        ["acquired_ts"] = 1494432023,
-                        ["abbr"] = "en",
+                        ["abbr"] = "al",
+                        ["text"] = "",
+                        ["state"] = 0,
+                        ["acquired_ts"] = 0,
                     },
                     [6] = 
                     {
-                        ["state"] = 3,
+                        ["abbr"] = "en",
                         ["text"] = "",
-                        ["acquired_ts"] = 1494432023,
+                        ["state"] = 0,
+                        ["acquired_ts"] = 0,
+                    },
+                    [7] = 
+                    {
                         ["abbr"] = "pr",
+                        ["text"] = "",
+                        ["state"] = 0,
+                        ["acquired_ts"] = 0,
+                    },
+                },
+                ["position"] = 
+                {
+                    [2] = 100,
+                    [1] = 350,
+                },
+                ["counter"] = 196,
+            },
+            ["hammer-meets-thumb"] = 
+            {
+                ["version"] = 2,
+                ["position"] = 
+                {
+                    [2] = 171.5739593506,
+                    [1] = 33.0295867920,
+                },
+                ["char_data"] = 
+                {
+                    [1] = 
+                    {
+                        ["abbr"] = "bs",
+                        ["acquired_ts"] = 1543013526,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [2] = 
+                    {
+                        ["abbr"] = "cl",
+                        ["acquired_ts"] = 1543013508,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [3] = 
+                    {
+                        ["abbr"] = "ww",
+                        ["acquired_ts"] = 1543013526,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [4] = 
+                    {
+                        ["abbr"] = "jw",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [5] = 
+                    {
+                        ["abbr"] = "al",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [6] = 
+                    {
+                        ["abbr"] = "en",
+                        ["acquired_ts"] = 1543118092,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [7] = 
+                    {
+                        ["abbr"] = "pr",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
                     },
                 },
             },
-            ["Hagnar the Slender"] = 
+            ["generic test altwo"] = 
             {
+                ["version"] = 2,
                 ["position"] = 
                 {
                     [2] = 100,
                     [1] = 350,
                 },
-                ["version"] = 2,
                 ["char_data"] = 
                 {
-                    [1] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349908,
-                        ["abbr"] = "bs",
-                    },
-                    [2] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349907,
-                        ["abbr"] = "cl",
-                    },
-                    [3] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349906,
-                        ["abbr"] = "ww",
-                    },
-                    [4] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349911,
-                        ["abbr"] = "al",
-                    },
-                    [5] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349910,
-                        ["abbr"] = "en",
-                    },
-                    [6] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349803,
-                        ["abbr"] = "pr",
-                    },
                 },
             },
-            ["Simone Chevalier"] = 
+            ["Neranwe"] = 
             {
+                ["version"] = 2,
                 ["position"] = 
                 {
                     [2] = 100,
                     [1] = 350,
                 },
-                ["version"] = 2,
                 ["char_data"] = 
                 {
-                    [1] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349670,
-                        ["abbr"] = "bs",
-                    },
-                    [2] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349669,
-                        ["abbr"] = "cl",
-                    },
-                    [3] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349668,
-                        ["abbr"] = "ww",
-                    },
-                    [4] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349669,
-                        ["abbr"] = "al",
-                    },
-                    [5] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349670,
-                        ["abbr"] = "en",
-                    },
-                    [6] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349545,
-                        ["abbr"] = "pr",
-                    },
+                },
+            },
+            ["Zugbesha"] = 
+            {
+                ["version"] = 2,
+                ["position"] = 
+                {
+                    [2] = 100,
+                    [1] = 350,
+                },
+                ["char_data"] = 
+                {
+                },
+            },
+            ["Ethelred the Writworthy"] = 
+            {
+                ["version"] = 2,
+                ["position"] = 
+                {
+                    [2] = 100,
+                    [1] = 350,
+                },
+                ["char_data"] = 
+                {
+                },
+            },
+            ["Zecorwyn"] = 
+            {
+                ["version"] = 2,
+                ["position"] = 
+                {
+                    [2] = 100,
+                    [1] = 350,
+                },
+                ["char_data"] = 
+                {
                 },
             },
             ["Alexander Mundus"] = 
             {
-                ["position"] = 
-                {
-                    [2] = 653,
-                    [1] = 639,
-                },
                 ["version"] = 2,
-                ["char_data"] = 
-                {
-                    [1] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349160,
-                        ["abbr"] = "bs",
-                    },
-                    [2] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349158,
-                        ["abbr"] = "cl",
-                    },
-                    [3] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349156,
-                        ["abbr"] = "ww",
-                    },
-                    [4] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349164,
-                        ["abbr"] = "al",
-                    },
-                    [5] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349162,
-                        ["abbr"] = "en",
-                    },
-                    [6] = 
-                    {
-                        ["text"] = "",
-                        ["state"] = 3,
-                        ["acquired_ts"] = 1494349419,
-                        ["abbr"] = "pr",
-                    },
-                },
-            },
-        },
-        ["@ziggr-prime"] = 
-        {
-            ["$AccountWide"] = 
-            {
                 ["position"] = 
                 {
                     [2] = 100,
                     [1] = 350,
                 },
-                ["version"] = 1,
+                ["char_data"] = 
+                {
+                },
+            },
+            ["Nerwanwe"] = 
+            {
+                ["version"] = 2,
+                ["position"] = 
+                {
+                    [2] = 100,
+                    [1] = 350,
+                },
+                ["char_data"] = 
+                {
+                    [1] = 
+                    {
+                        ["abbr"] = "bs",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [2] = 
+                    {
+                        ["abbr"] = "cl",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [3] = 
+                    {
+                        ["abbr"] = "ww",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [4] = 
+                    {
+                        ["abbr"] = "jw",
+                        ["acquired_ts"] = 1524416057,
+                        ["state"] = 3,
+                        ["text"] = "Deliver Goods to Nearest Writ Quartermaster",
+                    },
+                    [5] = 
+                    {
+                        ["abbr"] = "al",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [6] = 
+                    {
+                        ["abbr"] = "en",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                    [7] = 
+                    {
+                        ["abbr"] = "pr",
+                        ["acquired_ts"] = 0,
+                        ["state"] = 0,
+                        ["text"] = "",
+                    },
+                },
+            },
+            ["generic test alt"] = 
+            {
+                ["version"] = 2,
+                ["position"] = 
+                {
+                    [2] = 100,
+                    [1] = 350,
+                },
+                ["char_data"] = 
+                {
+                },
+            },
+            ["Simone Chevalier"] = 
+            {
+                ["version"] = 2,
+                ["position"] = 
+                {
+                    [2] = 100,
+                    [1] = 350,
+                },
+                ["char_data"] = 
+                {
+                },
+            },
+            ["Hagnar the Slender"] = 
+            {
+                ["version"] = 2,
+                ["position"] = 
+                {
+                    [2] = 100,
+                    [1] = 350,
+                },
+                ["char_data"] = 
+                {
+                },
             },
         },
     },
