@@ -435,17 +435,12 @@ end
 -- If a crafting quest exists in the journal, it either needs to be
 -- crafted, or needs to be turned in.
 function CharData:ConditionTextToState(condition_text)
-    local deliver_list = { LibCraftText.DAILY.COND.DELIVER_NEAREST_QUARTERMASTER
-                         , LibCraftText.DAILY.COND.DELIVER_ALLIANCE_DEPOT
-                         , LibCraftText.DAILY.COND.DELIVER_CONSORTIUM_TRADEPOST
-                         , LibCraftText.DAILY.COND.DELIVER_REFUGEE_RELIEF
-                         }
-    for _,cond_text in ipairs(deliver_list) do
-        local says_deliver = string.find(condition_text, cond_text)
-        if says_deliver then
-            return DW.STATE_2_NEEDS_TURN_IN
-        end
+    local says_deliver = string.find(condition_text
+                            , LibCraftText.DAILY.COND.DELIVER_GOODS_SUBSTRING)
+    if says_deliver then
+        return DW.STATE_2_NEEDS_TURN_IN
     end
+
     DW.log.Debug(condition_text)
     return DW.STATE_1_NEEDS_CRAFTING
 end
