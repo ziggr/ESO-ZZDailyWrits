@@ -1,4 +1,4 @@
-ZZDailyWrits = {}
+ZZDailyWrits = _G['ZZDailyWrits'] or {}
 local DW = ZZDailyWrits
 
 DW.name            = "ZZDailyWrits"
@@ -482,7 +482,7 @@ function DW.CycleCt()
     if not DW.savedVariables.enable then
         return 0
     end
-    return math.floor( (self.savedVariables.days_to_craft or 0) / 3 )
+    return math.floor( (DW.savedVariables.days_to_craft or 0) / 3 )
 end
 
 -- We've just switched from "acquire" to "needs crafting".
@@ -1230,9 +1230,21 @@ function DW.AbandonDailies()
 end
 
 function DW.Test()
+    if not DW then
+        d("no DW") else d("   DW")
+    end
+    if not DW and DW.Log then
+       d("no DW.Log") else d("   DW.Log")
+    end
+    if not DW and DW.Log and DW.Log.Debug then
+        d("no DW.Log.Debug") else d("   DW.Log.Debug")
+    end
+
+    DW.Log.Debug("Test...")
     DW.AbandonDailies()
+    DW.RefreshDataAndUI()
     DW.char_data:EnqueueCrafting(CRAFTING_TYPE_BLACKSMITHING, 1)
-    DW:DisplayCharData()
+    DW.RefreshDataAndUI()
 end
 
 function DW.SlashCommand(args)
