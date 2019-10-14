@@ -588,7 +588,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
             end
         end
         if queued_ct <= 0 then
-            d("Autoqueue skipped: PR writ not parsed.")
+            DW.Log.Info("Autoqueue skipped: PR writ not parsed.")
         end
         elseif crafting_type == CRAFTING_TYPE_ALCHEMY then
             local cond_list = LibCraftText.ParseQuest(quest_index)
@@ -687,7 +687,7 @@ function CharData:RemoveIfAlreadyInBag(q, constants)
         local inv_masked     = DW.MaskedLink(inv_link, mask)
         if counts[inv_masked] then
             counts[inv_masked].have = 1 + (counts[inv_masked].have or 0)
-            d("Found: "..inv_link)
+            DW.Log.Info("Found: "..inv_link)
         end
     end
 
@@ -702,10 +702,10 @@ function CharData:RemoveIfAlreadyInBag(q, constants)
             if count_elem then
                 if count_elem.want <= count_elem.have then
                     table.remove(q,i)
-                    d("Removed all: "..qi.link)
+                    DW.Log.Info("Removed all: "..qi.link)
                 elseif (0 < count_elem.have) then
                     qi.count = count_elem.want - count_elem.have
-                    d("Removed "..tostring(count_elem.have)
+                    DW.Log.Info("Removed "..tostring(count_elem.have)
                       ..", left "..tostring(qi.count)..": "..qi.link)
                 end
             end
@@ -723,7 +723,7 @@ function CharData:LLC_Enqueue(q, constants)
         queued_ct = queued_ct + qe.count
 d(o)
     end
-    d("Autoqueued "..tostring(queued_ct).." requests")
+    DW.Log.Info("Autoqueued "..tostring(queued_ct).." requests")
 end
 
 local function FindMaxStyleMat()
@@ -751,7 +751,7 @@ local function FindMaxStyleMat()
             max_ct      = inv_ct
         end
     end
-    d("style mat_ct:"..tostring(max_ct).."  "..max_element.name)
+    DW.Log.Info("style mat_ct:"..tostring(max_ct).."  "..max_element.name)
     return max_element.style
 end
 
@@ -880,7 +880,7 @@ function CharData:LLC_ToOneRequest(qe, constants, ct)
         return request_table
     end
 
-    d("ZZDailyWrits bug: unsupported station:"..tostring(constants.station))
+    DW.Log.Error("ZZDailyWrits bug: unsupported station:"..tostring(constants.station))
 end
 
 -- REQUIRES THAT WE START MANAGING OUR OWN DAMN LLC QUEUE
@@ -1090,7 +1090,7 @@ end
 function DW.ShowWindow()
     ui = DWUI
     if not ui then
-        d("No UI")
+        DW.Log.Error("No UI")
         return
     end
     local h = DWUI:IsHidden()
@@ -1106,7 +1106,7 @@ function ZZDailyWrits.ToggleVisibility()
     -- d("ZZDW.ToggleVisibility")
     ui = DWUI
     if not ui then
-        d("No UI")
+        DW.Log.Error("No UI")
         return
     end
     local h = DWUI:IsHidden()
@@ -1226,7 +1226,7 @@ function DW.AbandonDailies()
         if jqi[DW.JQI.quest_type] == QUEST_TYPE_CRAFTING
             and repeat_type == QUEST_REPEAT_DAILY then
             local name = jqi[DW.JQI.quest_name]
-            d(string.format("abandoned %d:%s", quest_index, tostring(name)))
+            DW.Log.Info(string.format("abandoned %d:%s", quest_index, tostring(name)))
             AbandonQuest(quest_index)
             abandon_ct = abandon_ct + 1
         end
@@ -1235,16 +1235,6 @@ function DW.AbandonDailies()
 end
 
 function DW.Test()
-    if not DW then
-        d("no DW") else d("   DW")
-    end
-    if not DW and DW.Log then
-       d("no DW.Log") else d("   DW.Log")
-    end
-    if not DW and DW.Log and DW.Log.Debug then
-        d("no DW.Log.Debug") else d("   DW.Log.Debug")
-    end
-
     DW.Log.Debug("Test...")
     DW.AbandonDailies()
     DW.RefreshDataAndUI()
@@ -1258,7 +1248,7 @@ function DW.SlashCommand(args)
     elseif args:lower() == "test" then
         DW.Test()
     else
-        d("Unknown command: '"..tostring(args).."'")
+        DW.Log.Error("Unknown command: '"..tostring(args).."'")
     end
 end
 SLASH_COMMANDS["/zzdw"] = DW.SlashCommand

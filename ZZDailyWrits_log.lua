@@ -49,7 +49,7 @@ function Log.Debug(...)
 end
 
 function Log.Info(...)
-    DW.LogOne("999999",...)
+    DW.LogOneWarnError("999999",...)
     DW.Logger():Info(...)
 end
 
