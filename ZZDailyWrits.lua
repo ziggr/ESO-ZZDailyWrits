@@ -27,9 +27,6 @@ DW.CRAFTING_TYPE = {
 
 local DWUI = nil
 
-DW.DAY_CT   = 0 -- 3               -- must be a multiple of 3
-DW.CYCLE_CT = DW.DAY_CT / 3   -- must be a multiple of 3
-
 local COLOR = {
     ["TEAL"     ] = "66AABB"
 ,   ["RED"      ] = "FF3333"
@@ -481,26 +478,34 @@ function ZZDailyWrits.GetLLC()
     return self.LibLazyCrafting
 end
 
+function DW.CycleCt()
+    if not DW.savedVariables.enable then
+        return 0
+    end
+    return math.floor( (self.savedVariables.days_to_craft or 0) / 3 )
+end
+
 -- We've just switched from "acquire" to "needs crafting".
 -- Now would be an excellent time to enqueue items for crafting.
 --
 -- crafting_type is CRAFTING_TYPE_XXX
 function CharData:EnqueueCrafting(crafting_type, quest_index)
-    if not DW.savedVariables.enable then
+    local cycle_ct = DW.CycleCt()
+    if not cycle_ct or cycle_ct <= 0 then
         return
     end
 
     if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
-          { count = DW.CYCLE_CT, pattern_index =  3, name = "1h sword"      , weight_name = "heavy", link="|H1:item:43531:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index =  6, name = "2h g.sword"    , weight_name = "heavy", link="|H1:item:43534:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index =  7, name = "dagger"        , weight_name = "heavy", link="|H1:item:43535:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index =  8, name = "chest"         , weight_name = "heavy", link="|H1:item:43537:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index =  9, name = "feet"          , weight_name = "heavy", link="|H1:item:43538:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index = 10, name = "hands"         , weight_name = "heavy", link="|H1:item:43539:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index = 11, name = "head"          , weight_name = "heavy", link="|H1:item:43562:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index = 12, name = "legs"          , weight_name = "heavy", link="|H1:item:43540:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index = 13, name = "shoulders"     , weight_name = "heavy", link="|H1:item:43541:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+          { count = cycle_ct, pattern_index =  3, name = "1h sword"      , weight_name = "heavy", link="|H1:item:43531:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
+        , { count = cycle_ct, pattern_index =  6, name = "2h g.sword"    , weight_name = "heavy", link="|H1:item:43534:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
+        , { count = cycle_ct, pattern_index =  7, name = "dagger"        , weight_name = "heavy", link="|H1:item:43535:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h" }
+        , { count = cycle_ct, pattern_index =  8, name = "chest"         , weight_name = "heavy", link="|H1:item:43537:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index =  9, name = "feet"          , weight_name = "heavy", link="|H1:item:43538:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index = 10, name = "hands"         , weight_name = "heavy", link="|H1:item:43539:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index = 11, name = "head"          , weight_name = "heavy", link="|H1:item:43562:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index = 12, name = "legs"          , weight_name = "heavy", link="|H1:item:43540:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index = 13, name = "shoulders"     , weight_name = "heavy", link="|H1:item:43541:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
         }
         local constants = {
           station     = CRAFTING_TYPE_BLACKSMITHING
@@ -509,15 +514,15 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_CLOTHIER then
         local q = {
-          { count = DW.CYCLE_CT, pattern_index =  1, name = "chest"         , weight_name = "light"  , link="|H1:item:43543:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index =  3, name = "feet"          , weight_name = "light"  , link="|H1:item:43544:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index =  5, name = "head"          , weight_name = "light"  , link="|H1:item:43564:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index =  6, name = "legs"          , weight_name = "light"  , link="|H1:item:43546:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index =  7, name = "shoulders"     , weight_name = "light"  , link="|H1:item:43547:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index =  8, name = "waist"         , weight_name = "light"  , link="|H1:item:43548:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index = 11, name = "hands"         , weight_name = "medium" , link="|H1:item:43552:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index = 12, name = "head"          , weight_name = "medium" , link="|H1:item:43563:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
-        , { count = DW.CYCLE_CT, pattern_index = 14, name = "shoulders"     , weight_name = "medium" , link="|H1:item:43554:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+          { count = cycle_ct, pattern_index =  1, name = "chest"         , weight_name = "light"  , link="|H1:item:43543:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index =  3, name = "feet"          , weight_name = "light"  , link="|H1:item:43544:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index =  5, name = "head"          , weight_name = "light"  , link="|H1:item:43564:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index =  6, name = "legs"          , weight_name = "light"  , link="|H1:item:43546:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index =  7, name = "shoulders"     , weight_name = "light"  , link="|H1:item:43547:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index =  8, name = "waist"         , weight_name = "light"  , link="|H1:item:43548:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index = 11, name = "hands"         , weight_name = "medium" , link="|H1:item:43552:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index = 12, name = "head"          , weight_name = "medium" , link="|H1:item:43563:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
+        , { count = cycle_ct, pattern_index = 14, name = "shoulders"     , weight_name = "medium" , link="|H1:item:43554:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h" }
         }
         local constants = {
           station     = CRAFTING_TYPE_CLOTHIER
@@ -526,12 +531,12 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_WOODWORKING then
         local q = {
-          { count = DW.CYCLE_CT * 2, pattern_index =  1, name = "bow"           , weight_name = "wood" , link="|H1:item:43549:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
-        , { count = DW.CYCLE_CT    , pattern_index =  3, name = "flame"         , weight_name = "wood" , link="|H1:item:43557:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
-        , { count = DW.CYCLE_CT    , pattern_index =  4, name = "ice"           , weight_name = "wood" , link="|H1:item:43558:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
-        , { count = DW.CYCLE_CT    , pattern_index =  5, name = "shock"         , weight_name = "wood" , link="|H1:item:43559:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
-        , { count = DW.CYCLE_CT * 2, pattern_index =  6, name = "resto"         , weight_name = "wood" , link="|H1:item:43560:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
-        , { count = DW.CYCLE_CT * 2, pattern_index =  2, name = "shield"        , weight_name = "wood" , link="|H1:item:43556:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h"  }
+          { count = cycle_ct * 2, pattern_index =  1, name = "bow"           , weight_name = "wood" , link="|H1:item:43549:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = cycle_ct    , pattern_index =  3, name = "flame"         , weight_name = "wood" , link="|H1:item:43557:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = cycle_ct    , pattern_index =  4, name = "ice"           , weight_name = "wood" , link="|H1:item:43558:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = cycle_ct    , pattern_index =  5, name = "shock"         , weight_name = "wood" , link="|H1:item:43559:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = cycle_ct * 2, pattern_index =  6, name = "resto"         , weight_name = "wood" , link="|H1:item:43560:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:0:0|h|h"  }
+        , { count = cycle_ct * 2, pattern_index =  2, name = "shield"        , weight_name = "wood" , link="|H1:item:43556:308:50:0:0:0:0:0:0:0:0:0:0:0:0:1:1:0:0:10000:0|h|h"  }
         }
         local constants = {
           station     = CRAFTING_TYPE_WOODWORKING
@@ -539,7 +544,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING then
-        local jw_mult = math.max(2,DW.CYCLE_CT)
+        local jw_mult = math.max(3,cycle_ct)
         local q = {
           { count = jw_mult * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry" , link="|H1:item:43561:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
         , { count = jw_mult * 4, pattern_index =  1, name = "ring"          , weight_name = "jewelry" , link="|H1:item:43536:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
@@ -552,7 +557,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:LLC_Enqueue(q, constants)
 
     elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
-        local en_mult = math.max(3,DW.CYCLE_CT)
+        local en_mult = math.max(3,cycle_ct)
         local q = {
           { count = en_mult, potency = REJERA, essence = DENI  , aspect = TA , link="|H1:item:26588:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
         , { count = en_mult, potency = REJERA, essence = MAKKO , aspect = TA , link="|H1:item:26582:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
@@ -570,7 +575,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
             if      parse.item
                 and parse.item.recipe_list_index
                 and parse.item.recipe_index then
-                local q = { { count             = DW.CYCLE_CT
+                local q = { { count             = cycle_ct
                             , recipe_list_index = parse.item.recipe_list_index
                             , recipe_index      = parse.item.recipe_index
                             }
@@ -610,7 +615,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
                     if parse.solvent == LibCraftText.MATERIAL.ALKAHEST then
                         count = 1
                     end
-                    if DW.CYCLE_CT <= 0 then count = 0 end
+                    if cycle_ct <= 0 then count = 0 end
                     local q = { { count    = count
                                 , solvent  = parse.solvent.item_id
                                 , reagent1 = reagent[1].item_id
@@ -1048,6 +1053,8 @@ DW.log = LibDebugLogger.Create(self.name)
     end
 
     self:RestorePos()
+
+    self.CreateSettingsWindow()
 end
 
 -- Save/Restore UI Position --------------------------------------------------
@@ -1222,14 +1229,70 @@ function DW.AbandonDailies()
     return abandon_ct
 end
 
+function DW.Test()
+    DW.AbandonDailies()
+    DW.char_data:EnqueueCrafting(CRAFTING_TYPE_BLACKSMITHING, 1)
+    DW:DisplayCharData()
+end
+
 function DW.SlashCommand(args)
     if args:lower() == "abandon" then
         DW.AbandonDailies()
+    elseif args:lower() == "test" then
+        DW.Test()
     else
         d("Unknown command: '"..tostring(args).."'")
     end
 end
 SLASH_COMMANDS["/zzdw"] = DW.SlashCommand
+
+-- UI ------------------------------------------------------------------------
+
+function DW.CreateSettingsWindow()
+    local LAM2 = LibStub("LibAddonMenu-2.0")
+    local lam_addon_id = "ZZDailyWrits_LAM"
+    local self = DW
+    local panelData = {
+        type                = "panel",
+        name                = self.name,
+        displayName         = self.name,
+        author              = "ziggr",
+        version             = self.version,
+        registerForRefresh  = false,
+        registerForDefaults = false,
+    }
+    local cntrlOptionsPanel = LAM2:RegisterAddonPanel( lam_addon_id
+                                                     , panelData
+                                                     )
+    local optionsData = {
+        { type      = "dropdown"
+        , name      = "Days to craft"
+        , choices   = { "0"
+                      , "3"
+                      , "9"
+                      }
+        , getFunc   = function()
+                        if self.savedVariables.enable then
+                            return self.savedVariables.days_to_craft or "0"
+                        end
+                        return "0"
+                      end
+        , setFunc   = function(e)
+                        if e == "9" or e == "3" then
+                            self.savedVariables.enable = true
+                            self.savedVariables.days_to_craft = e
+                        else
+                            self.savedVariables.enable = false
+                            self.savedVariables.days_to_craft = nil
+                        end
+                      end
+        },
+
+    }
+
+    LAM2:RegisterOptionControls(lam_addon_id, optionsData)
+end
+
 
 --  1   string buffName             "Increased Experience"
 --  2, number timeStarted
