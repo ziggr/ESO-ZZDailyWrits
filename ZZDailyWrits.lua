@@ -717,12 +717,11 @@ function CharData:LLC_Enqueue(q, constants)
     local queued_ct = 0
     local llc = ZZDailyWrits.GetLLC()
     for _, qe in ipairs(q) do
-        for i = 1, qe.count do
-            local dol_request = self:LLC_ToOneRequest(qe, constants)
-            local o = dol_request.CraftRequestTable
-            llc[dol_request.llc_func](llc, unpack(o))
-            queued_ct = queued_ct + 1
-        end
+        local dol_request = self:LLC_ToOneRequest(qe, constants, qe.count)
+        local o = dol_request.CraftRequestTable
+        llc[dol_request.llc_func](llc, unpack(o))
+        queued_ct = queued_ct + qe.count
+d(o)
     end
     d("Autoqueued "..tostring(queued_ct).." requests")
 end
@@ -763,7 +762,7 @@ end
 
 -- Return a single item, as a structure suitable for enqueuing with
 -- Dolgubon's Lazy Set Crafter.
-function CharData:LLC_ToOneRequest(qe, constants)
+function CharData:LLC_ToOneRequest(qe, constants, ct)
     DW.savedVariables.counter = (DW.savedVariables.counter or 0) + 1
     local reference = DW.savedVariables.counter
 
@@ -789,7 +788,8 @@ function CharData:LLC_ToOneRequest(qe, constants)
         o.quality      = 1 -- white
         o.autocraft    = true
         o.reference    = reference
-
+        o.quantity     = ct or 1
+        o.overrideNMC  = false
         if constants.station == CRAFTING_TYPE_JEWELRYCRAFTING then
             o.styleIndex = nil
         end
@@ -807,6 +807,11 @@ function CharData:LLC_ToOneRequest(qe, constants)
         , o.quality                 --  9
         , o.autocraft               -- 10
         , o.reference               -- 11
+        , o.potencyId               -- 12
+        , o.essenceId               -- 13
+        , o.aspectId                -- 14
+        , o.quantity                -- 15
+        , o.overrideNMC             -- 16 overrideNonMulticraft
         }
                         -- UI row with user-visible strings.
                         -- This is just for display, so okay if strings
