@@ -721,7 +721,6 @@ function CharData:LLC_Enqueue(q, constants)
         local o = dol_request.CraftRequestTable
         llc[dol_request.llc_func](llc, unpack(o))
         queued_ct = queued_ct + qe.count
-d(o)
     end
     DW.Log.Info("Autoqueued "..tostring(queued_ct).." requests")
 end
@@ -784,7 +783,7 @@ function CharData:LLC_ToOneRequest(qe, constants, ct)
         o.traitIndex   = 0                       + 1
         o.useUniversalStyleItem = false
         o.station      = constants.station
-        o.setIndex     = 1 -- no set
+        o.setIndex     = 0 -- no set
         o.quality      = 1 -- white
         o.autocraft    = true
         o.reference    = reference
