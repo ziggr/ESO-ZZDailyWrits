@@ -1112,8 +1112,30 @@ function ZZDailyWrits.ToggleVisibility()
     if h then
         DW:RestorePos()
         DW.RefreshDataAndUI()
+        DW.RegisterBankListener()
+    else
+        DW.UnregisterBankListener()
     end
     DWUI:SetHidden(not h)
+end
+
+-- Bank listener -------------------------------------------------------------
+
+function ZZDailyWrits.RegisterBankListener()
+    EVENT_MANAGER:RegisterForEvent(ZZDailyWrits.name
+        , EVENT_CLOSE_BANK
+        , ZZDailyWrits.OnCloseBank
+        )
+end
+
+function ZZDailyWrits.UnregisterBankListener()
+    EVENT_MANAGER:UnregisterForEvent(ZZDailyWrits.name
+        , EVENT_CLOSE_BANK
+        )
+end
+
+function ZZDailyWrits.OnCloseBank()
+    DW.RefreshDataAndUI()
 end
 
 -- UI ------------------------------------------------------------------------
