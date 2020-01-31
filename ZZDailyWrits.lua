@@ -543,7 +543,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         }
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
-    elseif crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING then
+    elseif (false and crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING) then
         local jw_mult = math.max(3,cycle_ct)
         local q = {
           { count = jw_mult * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry" , link="|H1:item:43561:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
@@ -556,7 +556,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
 
-    elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
+    elseif (false and crafting_type == CRAFTING_TYPE_ENCHANTING) then
         local en_mult = math.max(3,cycle_ct)
         local q = {
           { count = en_mult, potency = REJERA, essence = DENI  , aspect = TA , link="|H1:item:26588:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
@@ -568,7 +568,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         }
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
-    elseif crafting_type == CRAFTING_TYPE_PROVISIONING then
+    elseif (false and crafting_type == CRAFTING_TYPE_PROVISIONING) then
         local cond_list = LibCraftText.ParseQuest(quest_index)
         local queued_ct = 0
         for _,parse in ipairs(cond_list) do
@@ -590,7 +590,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         if queued_ct <= 0 then
             DW.Log.Info("Autoqueue skipped: PR writ not parsed.")
         end
-        elseif crafting_type == CRAFTING_TYPE_ALCHEMY then
+        elseif (false and crafting_type == CRAFTING_TYPE_ALCHEMY) then
             local cond_list = LibCraftText.ParseQuest(quest_index)
             for _,parse in ipairs(cond_list) do
                 if parse.trait and parse.solvent then
@@ -810,7 +810,7 @@ function CharData:LLC_ToOneRequest(qe, constants, ct)
         , o.essenceId               -- 13
         , o.aspectId                -- 14
         , o.quantity                -- 15
-        , o.overrideNMC             -- 16 overrideNonMulticraft
+        , nil --o.overrideNMC       -- 16 overrideNonMulticraft must be NIL not false
         }
                         -- UI row with user-visible strings.
                         -- This is just for display, so okay if strings
