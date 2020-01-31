@@ -1,8 +1,8 @@
 ## Title: ZZDailyWrits
 ## Description: ZZDailyWrits version 5.0.2
-## AddOnVersion 5.0.2
+## AddOnVersion 5.3.1
 ## Author: ziggr
-## APIVersion: 100026 100027
+## APIVersion: 100029 100030
 ## SavedVariables: ZZDailyWritsVars
 ## DependsOn: LibCraftText LibLazyCrafting LibDebugLogger LibAddonMenu-2.0
 
