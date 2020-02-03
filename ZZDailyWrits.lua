@@ -15,14 +15,21 @@ local CRAFTING_TYPE_JEWELRYCRAFTING = CRAFTING_TYPE_JEWELRYCRAFTING or 7
 --
 -- Use these values for craft_type
 --
+-- auto_craft: which crafting lines should ZZDW auto-queue and craft?
+--             Alchemy and Provisioning? Nah, we pull those from bank.
+--
+-- multi_craft: which crafting lines can LLC craft multiples at once?
+--              All the smithing lines work. AL/EN/PR still lack an API
+--              as of 2020-02-03 ESO 5.3.
+--
 DW.CRAFTING_TYPE = {
-  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING   , auto_craft = true  }
-, { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER        , auto_craft = true  }
-, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING     , auto_craft = true  }
-, { abbr = "jw", order = 4, ct = CRAFTING_TYPE_JEWELRYCRAFTING , auto_craft = false }
-, { abbr = "al", order = 5, ct = CRAFTING_TYPE_ALCHEMY         , auto_craft = false }
-, { abbr = "en", order = 6, ct = CRAFTING_TYPE_ENCHANTING      , auto_craft = false }
-, { abbr = "pr", order = 7, ct = CRAFTING_TYPE_PROVISIONING    , auto_craft = false }
+  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING   , auto_craft = true  , multi_craft = true  }
+, { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER        , auto_craft = true  , multi_craft = true  }
+, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING     , auto_craft = true  , multi_craft = true  }
+, { abbr = "jw", order = 4, ct = CRAFTING_TYPE_JEWELRYCRAFTING , auto_craft = false , multi_craft = true  }
+, { abbr = "al", order = 5, ct = CRAFTING_TYPE_ALCHEMY         , auto_craft = false , multi_craft = false }
+, { abbr = "en", order = 6, ct = CRAFTING_TYPE_ENCHANTING      , auto_craft = true  , multi_craft = false }
+, { abbr = "pr", order = 7, ct = CRAFTING_TYPE_PROVISIONING    , auto_craft = false , multi_craft = false }
 }
 local DWUI = nil
 
@@ -518,7 +525,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         return
     end
     local cctt = DW.FindCraftingType(crafting_type)
-    if not cctt and cctt.auto_craft then return end
+    if not (cctt and cctt.auto_craft) then return end
 
     if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
@@ -569,10 +576,9 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
     elseif crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING then
-        local jw_mult = math.max(3,cycle_ct)
         local q = {
-          { count = jw_mult * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry" , link="|H1:item:43561:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
-        , { count = jw_mult * 4, pattern_index =  1, name = "ring"          , weight_name = "jewelry" , link="|H1:item:43536:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
+          { count = cycle_ct * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry" , link="|H1:item:43561:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
+        , { count = cycle_ct * 4, pattern_index =  1, name = "ring"          , weight_name = "jewelry" , link="|H1:item:43536:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
         }
         local constants = {
           station     = CRAFTING_TYPE_JEWELRYCRAFTING
@@ -582,11 +588,10 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:LLC_Enqueue(q, constants)
 
     elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
-        local en_mult = math.max(3,cycle_ct)
         local q = {
-          { count = en_mult, potency = REJERA, essence = DENI  , aspect = TA , link="|H1:item:26588:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
-        , { count = en_mult, potency = REJERA, essence = MAKKO , aspect = TA , link="|H1:item:26582:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
-        , { count = en_mult, potency = REJERA, essence = OKO   , aspect = TA , link="|H1:item:26580:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
+          { count = cycle_ct, potency = REJERA, essence = DENI  , aspect = TA , link="|H1:item:26588:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
+        , { count = cycle_ct, potency = REJERA, essence = MAKKO , aspect = TA , link="|H1:item:26582:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
+        , { count = cycle_ct, potency = REJERA, essence = OKO   , aspect = TA , link="|H1:item:26580:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
         }
         local constants = {
           station     = CRAFTING_TYPE_ENCHANTING
@@ -744,7 +749,8 @@ function CharData:LLC_Enqueue(q, constants)
     for _, qe in ipairs(q) do
         local llc_ct = 1
         local loop_ct = qe.count or 1
-        if ENABLE_MULTICRAFT then
+        local cctt    = DW.FindCraftingType(constants.station)
+        if ENABLE_MULTICRAFT and cctt and cctt.multi_craft then
             llc_ct = qe.count or 1
             loop_ct = 1
         end
