@@ -36,6 +36,11 @@ local COLOR = {
 ,   ["ORANGE"   ] = "FF8800"
 }
 
+                        -- If enabled, attempt to call LLC's multicraft
+                        -- support, which can craft 9 days' worth of items
+                        -- just as quickly as 3 days' worth.
+local ENABLE_MULTICRAFT = true
+
 -- Quest states --------------------------------------------------------------
 
                         -- Not started
@@ -727,9 +732,15 @@ function CharData:LLC_Enqueue(q, constants)
     local queued_ct = 0
     local llc = ZZDailyWrits.GetLLC()
     for _, qe in ipairs(q) do
-        local dol_request = self:LLC_ToOneRequest(qe, constants, 1) --qe.count)
+        local llc_ct = 1
+        local loop_ct = qe.count or 1
+        if ENABLE_MULTICRAFT then
+            llc_ct = qe.count or 1
+            loop_ct = 1
+        end
+        local dol_request = self:LLC_ToOneRequest(qe, constants, llc_ct) --qe.count)
         local o = dol_request.CraftRequestTable
-        for i = 1, (qe.count or 1) do
+        for i = 1, loop_ct do
             llc[dol_request.llc_func](llc, unpack(o))
         end
         queued_ct = queued_ct + qe.count
@@ -799,7 +810,7 @@ function CharData:LLC_ToOneRequest(qe, constants, ct)
         o.quality      = 1 -- white
         o.autocraft    = true
         o.reference    = reference
-        o.quantity     = 1 -- ct or 1   I can't get LLC to multicraft and I'm sick of fighting it.
+        o.quantity     = ct or 1
         o.overrideNMC  = true
         if constants.station == CRAFTING_TYPE_JEWELRYCRAFTING then
             o.styleIndex = nil
