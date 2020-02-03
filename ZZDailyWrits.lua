@@ -16,15 +16,14 @@ local CRAFTING_TYPE_JEWELRYCRAFTING = CRAFTING_TYPE_JEWELRYCRAFTING or 7
 -- Use these values for craft_type
 --
 DW.CRAFTING_TYPE = {
-  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING    }
-, { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER         }
-, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING      }
-, { abbr = "jw", order = 4, ct = CRAFTING_TYPE_JEWELRYCRAFTING  }
-, { abbr = "al", order = 5, ct = CRAFTING_TYPE_ALCHEMY          }
-, { abbr = "en", order = 6, ct = CRAFTING_TYPE_ENCHANTING       }
-, { abbr = "pr", order = 7, ct = CRAFTING_TYPE_PROVISIONING     }
+  { abbr = "bs", order = 1, ct = CRAFTING_TYPE_BLACKSMITHING   , auto_craft = true  }
+, { abbr = "cl", order = 2, ct = CRAFTING_TYPE_CLOTHIER        , auto_craft = true  }
+, { abbr = "ww", order = 3, ct = CRAFTING_TYPE_WOODWORKING     , auto_craft = true  }
+, { abbr = "jw", order = 4, ct = CRAFTING_TYPE_JEWELRYCRAFTING , auto_craft = false }
+, { abbr = "al", order = 5, ct = CRAFTING_TYPE_ALCHEMY         , auto_craft = false }
+, { abbr = "en", order = 6, ct = CRAFTING_TYPE_ENCHANTING      , auto_craft = false }
+, { abbr = "pr", order = 7, ct = CRAFTING_TYPE_PROVISIONING    , auto_craft = false }
 }
-
 local DWUI = nil
 
 local COLOR = {
@@ -499,6 +498,15 @@ function DW.CycleCt()
     return math.floor( (DW.savedVariables.days_to_craft or 0) / 3 )
 end
 
+function DW.FindCraftingType(crafting_type)
+    for _,c in ipairs(DW.CRAFTING_TYPE) do
+        if c.ct == crafting_type then
+            return c
+        end
+    end
+    return nil
+end
+
 -- We've just switched from "acquire" to "needs crafting".
 -- Now would be an excellent time to enqueue items for crafting.
 --
@@ -509,6 +517,8 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
     if not cycle_ct or cycle_ct <= 0 then
         return
     end
+    local cctt = DW.FindCraftingType(crafting_type)
+    if not cctt and cctt.auto_craft then return end
 
     if crafting_type == CRAFTING_TYPE_BLACKSMITHING then
         local q = {
@@ -558,7 +568,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         }
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
-    elseif (false and crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING) then
+    elseif crafting_type == CRAFTING_TYPE_JEWELRYCRAFTING then
         local jw_mult = math.max(3,cycle_ct)
         local q = {
           { count = jw_mult * 3, pattern_index =  2, name = "necklace"      , weight_name = "jewelry" , link="|H1:item:43561:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h"  }
@@ -571,7 +581,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
 
-    elseif (false and crafting_type == CRAFTING_TYPE_ENCHANTING) then
+    elseif crafting_type == CRAFTING_TYPE_ENCHANTING then
         local en_mult = math.max(3,cycle_ct)
         local q = {
           { count = en_mult, potency = REJERA, essence = DENI  , aspect = TA , link="|H1:item:26588:308:50:0:0:0:0:0:0:0:0:0:0:0:0:0:1:0:0:0:0|h|h" }
@@ -583,7 +593,7 @@ function CharData:EnqueueCrafting(crafting_type, quest_index)
         }
         self:RemoveIfAlreadyInBag(q, constants)
         self:LLC_Enqueue(q, constants)
-    elseif (false and crafting_type == CRAFTING_TYPE_PROVISIONING) then
+    elseif crafting_type == CRAFTING_TYPE_PROVISIONING then
         local cond_list = LibCraftText.ParseQuest(quest_index)
         local queued_ct = 0
         for _,parse in ipairs(cond_list) do
