@@ -140,6 +140,11 @@ function CharData:ScanJournal()
                         -- then now would be a great time to automatically
                         -- queue up that crafting.
         local new_state = self.quest_status[i].state
+        -- DW.Log.Debug( "ScanJournal ct:%d state change %s --> %s"
+        --             , (        ct and         ct.ct) or 0
+        --             , (prev_state and prev_state.id) or "?"
+        --             , ( new_state and  new_state.id) or "?"
+        --             )
         if (new_state == DW.STATE_1_NEEDS_CRAFTING)
                 and (prev_state ~= new_state) then
             self:EnqueueCrafting(ct.ct, ct_to_qi[ct.ct])
@@ -347,6 +352,11 @@ function CharData:AbsorbQuest(quest_index)
     local qinfo         = { GetJournalQuestInfo(quest_index) }
     local quest_name    = qinfo[DW.JQI.quest_name]
     local crafting_type = LibCraftText.DailyQuestNameToCraftingType(quest_name)
+    -- DW.Log.Debug("AbsorbQuest qi:%d qn:'%s' ct:%s"
+    --         , quest_index
+    --         , quest_name
+    --         , tostring(crafting_type)
+    --         )
     if not crafting_type then return end
 
                         -- Find correct index into CharData.quest_status[]
@@ -366,7 +376,6 @@ end
 
 -- Return a quest's conditions as a single QuestStatus instance.
 function CharData:AccumulateCondition(quest_index)
-    local DEBUG = function() end
     local text_list = {}
     local state     = DW.STATE_1_NEEDS_CRAFTING
 
@@ -377,24 +386,18 @@ function CharData:AccumulateCondition(quest_index)
                         -- Ignore final step if it is one of Update 17/Dragon Bones
                         -- "Brewers and Cooks Can Provide Recipes" hints as a step.
     if self:IsUpdate17RecipeStep(quest_index, step_ct) then
-        DEBUG("skipping 'Brewers have recipes' step_index:"..tostring(step_ct))
+        -- DW.Log.Debug("skipping 'Brewers have recipes' step_index:"..tostring(step_ct))
         step_ct = step_ct - 1
     end
 
-    DEBUG("step_ct:"..tostring(step_ct))
     local step_index = step_ct
     local sinfo = { GetJournalQuestStepInfo(quest_index, step_index) }
-    DEBUG("GetJournalQuestStepInfo()")
-    DEBUG(sinfo)
--- d(sinfo)
     local condition_ct = sinfo[DW.JQSI.num_conditions]
     if condition_ct == 0 then -- It's already partially turned in, "Sign Delivery Manifest" time.
         state = DW.STATE_2_NEEDS_TURN_IN
     else
         for ci = 1, condition_ct do
             local cinfo = { GetJournalQuestConditionInfo(quest_index, step_index, ci) }
-            DEBUG("Condition " .. tostring(ci))
-            DEBUG(cinfo)
                             -- If we have not completed all the required counts
                             -- for this condition, then its text matters.
             if cinfo[DW.JQCI.is_visible]
@@ -402,6 +405,12 @@ function CharData:AccumulateCondition(quest_index)
                 local c_text = cinfo[DW.JQCI.condition_text]
                 table.insert(text_list, c_text)
                 state = DW.StateMax(state, self:ConditionTextToState(c_text))
+                -- DW.Log.Debug( "AccumulateCondition() qi:%d ci:%d, new state:%s  %s"
+                --             , quest_index
+                --             , ci
+                --             , (state and state.id) or "?"
+                --             , c_text
+                --             )
             end
         end
     end
@@ -490,6 +499,7 @@ end
 --
 -- crafting_type is CRAFTING_TYPE_XXX
 function CharData:EnqueueCrafting(crafting_type, quest_index)
+    -- DW.Log.Debug("EnqueueCrafting ct:%d qi:%d", crafting_type, quest_index)
     local cycle_ct = DW.CycleCt()
     if not cycle_ct or cycle_ct <= 0 then
         return
@@ -717,9 +727,11 @@ function CharData:LLC_Enqueue(q, constants)
     local queued_ct = 0
     local llc = ZZDailyWrits.GetLLC()
     for _, qe in ipairs(q) do
-        local dol_request = self:LLC_ToOneRequest(qe, constants, qe.count)
+        local dol_request = self:LLC_ToOneRequest(qe, constants, 1) --qe.count)
         local o = dol_request.CraftRequestTable
-        llc[dol_request.llc_func](llc, unpack(o))
+        for i = 1, (qe.count or 1) do
+            llc[dol_request.llc_func](llc, unpack(o))
+        end
         queued_ct = queued_ct + qe.count
     end
     DW.Log.Info("Autoqueued "..tostring(queued_ct).." requests")
@@ -787,8 +799,8 @@ function CharData:LLC_ToOneRequest(qe, constants, ct)
         o.quality      = 1 -- white
         o.autocraft    = true
         o.reference    = reference
-        o.quantity     = ct or 1
-        o.overrideNMC  = false
+        o.quantity     = 1 -- ct or 1   I can't get LLC to multicraft and I'm sick of fighting it.
+        o.overrideNMC  = true
         if constants.station == CRAFTING_TYPE_JEWELRYCRAFTING then
             o.styleIndex = nil
         end
@@ -810,7 +822,7 @@ function CharData:LLC_ToOneRequest(qe, constants, ct)
         , o.essenceId               -- 13
         , o.aspectId                -- 14
         , o.quantity                -- 15
-        , nil --o.overrideNMC       -- 16 overrideNonMulticraft must be NIL not false
+        , o.overrideNMC             -- 16 overrideNonMulticraft must be NIL not false
         }
                         -- UI row with user-visible strings.
                         -- This is just for display, so okay if strings
