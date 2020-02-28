@@ -1316,7 +1316,7 @@ SLASH_COMMANDS["/zzdw"] = DW.SlashCommand
 -- UI ------------------------------------------------------------------------
 
 function DW.CreateSettingsWindow()
-    local LAM2 = LibStub("LibAddonMenu-2.0")
+    local LAM2 = LibAddonMenu2
     local lam_addon_id = "ZZDailyWrits_LAM"
     local self = DW
     local panelData = {
