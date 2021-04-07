@@ -488,7 +488,7 @@ function ZZDailyWrits.GetLLC()
     local self = ZZDailyWrits
     if self.LibLazyCrafting then return self.LibLazyCrafting end
 
-    local lib = LibStub:GetLibrary("LibLazyCrafting")
+    local lib = LibLazyCrafting -- LibStub:GetLibrary("LibLazyCrafting")
     self.LibLazyCrafting_lib = lib
     self.LibLazyCrafting = lib:AddRequestingAddon(
          self.name                    -- name
